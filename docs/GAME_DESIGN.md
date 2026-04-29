@@ -12,7 +12,7 @@ Phase 0 includes only the playable shell: a black space background, lightweight 
 - The player has a maximum of 3 lives for the full run.
 - Game over occurs when lives reach 0.
 - Normal stages currently use a 35-second timer placeholder.
-- Stage clear occurs when the timer reaches 0.
+- Normal wave progression occurs automatically when the timer reaches 0.
 - Score, currency, and remaining lives carry into the next stage.
 - Stage progression is now data-driven through per-stage configuration.
 - Every 5th stage is marked as a planned boss stage, but boss fights are not implemented yet.
@@ -33,7 +33,7 @@ Enemies can now damage the player on direct collision. A collision removes the e
 
 Enemies can now shoot generated placeholder projectiles. Enemy projectiles travel toward the player/camera side, can damage the player, and trigger the same invulnerability window as direct enemy contact.
 
-Enemy shooting is still placeholder/generated visual only. Bosses, shop, missions, power-ups, final assets, and richer enemy behaviors remain future work.
+Enemy shooting is still placeholder/generated visual only. Bosses, missions, final assets, and richer enemy behaviors remain future work.
 
 ## Enemy Variants
 
@@ -45,11 +45,11 @@ Three generated placeholder enemy variants now exist:
 
 Projectile hits reduce enemy health. Score and currency are granted only when an enemy is destroyed.
 
-## Current Stage Flow
+## Current Wave Flow
 
-The HUD shows the remaining stage time. During active gameplay, the timer counts down from 35 seconds. When it reaches 0, active gameplay pauses, enemies/projectiles are cleared, and the Stage Clear overlay appears. Continuing advances to the next stage, resets the timer, resets player position, and keeps score, currency, and remaining lives.
+The HUD shows the remaining wave time. During active gameplay, the timer counts down from 35 seconds. When it reaches 0, the next wave starts automatically, the timer resets, the HUD wave number updates, and a short non-blocking wave-passed/incoming banner appears. Normal wave transitions no longer require Continue or Enter.
 
-Game over still has priority: if lives reach 0 before the timer ends, the game over flow appears instead of stage clear.
+Active enemies, player projectiles, enemy projectiles, power-ups, and active temporary effects are preserved across normal wave transitions. Existing enemies keep their spawned behavior, while new enemies use the newly loaded stage config. Game over still has priority: if lives reach 0 before the timer ends, the game over flow appears instead of wave progression.
 
 ## Power-Ups
 
@@ -60,11 +60,11 @@ Generated placeholder power-ups now spawn from deep space, move toward the playe
 - Shield blocks player damage from enemy contact and enemy projectiles for its active duration.
 - Score multiplier temporarily increases score gained from destroyed enemies.
 
-Temporary effects expire automatically. Shop and permanent upgrades are still future work; future fire-rate upgrades should reduce the cooldown further while respecting the configured minimums.
+Temporary effects expire automatically. Permanent saved upgrades are still future work; current shop upgrades are run-only and respect the configured cooldown minimums.
 
 ## Between-Stage Shop
 
-After stage clear, the shop appears before the next stage when the player has enough currency for at least one available upgrade. The player can buy an upgrade or skip and continue to the next stage, saving currency for later.
+After a wave ends, the shop appears before gameplay resumes when the player has enough currency for at least one available upgrade. The shop freezes gameplay and effect timers, but does not clear active enemies, projectiles, power-ups, or temporary effects. The player can buy an upgrade or skip and continue into the next wave, saving currency for later.
 
 Currency is spent on run upgrades only. Current upgrades are fire rate, projectile damage, projectile speed, shield duration, and score bonus. Fire rate uses the configured cooldown limits, projectile damage helps reduce tank hit counts, projectile speed uses the existing projectile update path, shield duration extends future shield pickups, and score bonus affects score rewards only. Upgrade levels reset on run restart and when returning to the Main Menu.
 
@@ -72,7 +72,7 @@ Currency is spent on run upgrades only. Current upgrades are fire rate, projecti
 
 The game now starts from a Main Menu instead of immediately starting gameplay. The Main Menu includes Play, How to Play, and a Missions placeholder panel. The How to Play panel lists movement, firing, survival, enemy destruction, enemy avoidance, and stage-clear goals. The Missions panel is placeholder only and does not implement mission logic yet.
 
-Pause Menu is available only during active gameplay with Escape. While Main Menu or Pause Menu is active, gameplay systems do not run: the player cannot shoot, enemies do not spawn or move, projectiles do not advance, and the stage timer does not count down.
+Pause Menu is available only during active gameplay with Escape. While Main Menu, Shop, or Pause Menu is active, gameplay systems do not run: the player cannot shoot, enemies do not spawn or move, projectiles do not advance, effects do not tick down, and the stage timer does not count down. Restart and Main Menu still reset the full run and clear all active pools.
 
 ## Later Systems
 

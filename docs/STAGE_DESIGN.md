@@ -2,7 +2,7 @@
 
 ## Structure
 
-The full game is planned as a 30-stage run with a maximum of 3 lives. The current implementation supports data-driven stage progression with a 35-second normal-stage timer placeholder. Between-stage shop visits can appear after eligible stage clears when affordable upgrades exist. Every 5th stage remains planned as a boss stage, but boss behavior is future work.
+The full game is planned as a 30-stage run with a maximum of 3 lives. The current implementation supports data-driven wave progression with a 35-second normal-stage timer placeholder. Normal waves advance automatically and preserve active enemies, projectiles, and power-ups. Between-wave shop visits can appear after eligible wave clears when affordable upgrades exist, pausing gameplay without clearing active objects. Every 5th stage remains planned as a boss stage, but boss behavior is future work.
 
 ## Stage Progression
 

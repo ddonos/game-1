@@ -47,6 +47,41 @@ body {
   display: none;
 }
 
+.wave-banner {
+  position: absolute;
+  top: 72px;
+  left: 50%;
+  z-index: 3;
+  display: grid;
+  gap: 4px;
+  min-width: min(360px, calc(100% - 32px));
+  padding: 10px 18px;
+  border: 1px solid rgba(132, 208, 255, 0.42);
+  border-radius: 6px;
+  background: rgba(0, 10, 18, 0.78);
+  color: #f4fbff;
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.wave-banner[hidden] {
+  display: none;
+}
+
+.wave-banner__passed {
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0;
+  text-shadow: 0 0 12px rgba(62, 210, 255, 0.55);
+}
+
+.wave-banner__incoming {
+  color: #9fc8dd;
+  font-size: 13px;
+  line-height: 1.1;
+}
+
 .hud__item {
   display: grid;
   grid-template-columns: auto auto;

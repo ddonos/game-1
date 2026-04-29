@@ -5,6 +5,7 @@ import { createMainMenuOverlay } from "./ui/mainMenuOverlay";
 import { createPauseMenuOverlay } from "./ui/pauseMenuOverlay";
 import { createShopOverlay } from "./ui/shopOverlay";
 import { createStageClearOverlay } from "./ui/stageClearOverlay";
+import { createWaveBanner } from "./ui/waveBanner";
 import "./ui/styles.css";
 
 const root = document.querySelector<HTMLDivElement>("#app");
@@ -48,6 +49,7 @@ const shopOverlay = createShopOverlay(
 const stageClearOverlay = createStageClearOverlay(root, () => {
   game.continueFromStageClear();
 });
+const waveBanner = createWaveBanner(root);
 game = new GameApp(
   canvas,
   hud,
@@ -55,7 +57,8 @@ game = new GameApp(
   pauseMenuOverlay,
   shopOverlay,
   gameOverOverlay,
-  stageClearOverlay
+  stageClearOverlay,
+  waveBanner
 );
 
 game.start();

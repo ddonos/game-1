@@ -43,7 +43,7 @@ export function createShopOverlay(
 
   return {
     show(state) {
-      meta.textContent = `Stage ${state.clearedStage} cleared  |  Currency ${state.currency}`;
+      meta.textContent = `Wave ${state.clearedStage} passed  |  Currency ${state.currency}`;
       grid.replaceChildren(
         ...state.upgrades.map((upgrade) => createUpgradeCard(upgrade, onBuy))
       );

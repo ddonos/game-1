@@ -22,6 +22,7 @@ import type { MainMenuOverlayController } from "../ui/mainMenuOverlay";
 import type { PauseMenuOverlayController } from "../ui/pauseMenuOverlay";
 import type { ShopOverlayController } from "../ui/shopOverlay";
 import type { StageClearOverlayController } from "../ui/stageClearOverlay";
+import type { WaveBannerController } from "../ui/waveBanner";
 import type { GameState } from "../utils/types";
 import { createScene } from "./createScene";
 
@@ -29,7 +30,6 @@ type RunState =
   | "mainMenu"
   | "playing"
   | "paused"
-  | "stageClear"
   | "shop"
   | "gameOver"
   | "runComplete";
@@ -71,7 +71,8 @@ export class GameApp {
     private readonly pauseMenuOverlay: PauseMenuOverlayController,
     private readonly shopOverlay: ShopOverlayController,
     private readonly gameOverOverlay: GameOverOverlayController,
-    private readonly stageClearOverlay: StageClearOverlayController
+    private readonly stageClearOverlay: StageClearOverlayController,
+    private readonly waveBanner: WaveBannerController
   ) {
     this.engine = new Engine(canvas, true, {
       antialias: true,
@@ -130,7 +131,7 @@ export class GameApp {
         return;
       }
 
-      if (this.runState === "stageClear" || this.runState === "runComplete") {
+      if (this.runState === "runComplete") {
         if (shouldContinue) {
           this.continueFromStageClear();
         }
@@ -275,8 +276,7 @@ export class GameApp {
       return;
     }
 
-    this.gameState.stage += 1;
-    this.continueToNextStage();
+    this.resumeAfterShop();
   }
 
   private resetRunState(): void {
@@ -302,17 +302,11 @@ export class GameApp {
   }
 
   continueFromStageClear(): void {
-    if (this.runState !== "stageClear" && this.runState !== "runComplete") {
+    if (this.runState !== "runComplete") {
       return;
     }
 
-    if (this.runState === "runComplete") {
-      this.restartRun();
-      return;
-    }
-
-    this.gameState.stage += 1;
-    this.continueToNextStage();
+    this.restartRun();
   }
 
   private applyCombatResults(): void {
@@ -372,7 +366,7 @@ export class GameApp {
     this.hud.update(this.gameState);
 
     if (isStageComplete && this.gameState.lives > 0) {
-      this.enterStageClear();
+      this.completeWave();
     }
   }
 
@@ -388,27 +382,45 @@ export class GameApp {
     this.hud.update(this.gameState);
     this.pauseMenuOverlay.hide();
     this.shopOverlay.hide();
+    this.waveBanner.hide();
     this.stageClearOverlay.hide();
     this.gameOverOverlay.show(this.gameState);
   }
 
-  private enterStageClear(): void {
-    const isRunComplete = this.stageSystem.isFinalStage(this.gameState.stage);
-    this.runState = isRunComplete ? "runComplete" : "stageClear";
+  private completeWave(): void {
+    if (this.stageSystem.isFinalStage(this.gameState.stage)) {
+      this.enterRunComplete();
+      return;
+    }
+
+    const passedWave = this.gameState.stage;
+    this.gameState.stage += 1;
+    this.stageSystem.setStage(this.gameState.stage);
+    this.enemies?.setStageConfig(this.stageSystem.config);
+    this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
+    this.hud.update(this.gameState);
+
+    if (this.upgrades.canAffordAny(this.gameState.currency)) {
+      this.runState = "shop";
+      this.waveBanner.hide();
+      this.showShop(passedWave);
+      return;
+    }
+
+    this.waveBanner.show(passedWave, this.gameState.stage);
+  }
+
+  private enterRunComplete(): void {
+    this.runState = "runComplete";
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
     this.enemyProjectiles?.deactivateAll();
     this.powerUps?.deactivateAll();
     this.hitFeedback?.deactivateAll();
-    if (!isRunComplete && this.upgrades.canAffordAny(this.gameState.currency)) {
-      this.runState = "shop";
-      this.showShop();
-      return;
-    }
-
+    this.waveBanner.hide();
     this.stageClearOverlay.show({
       clearedStage: this.gameState.stage,
-      isRunComplete,
+      isRunComplete: true,
       state: this.gameState
     });
   }
@@ -417,33 +429,25 @@ export class GameApp {
     this.mainMenuOverlay.hide();
     this.pauseMenuOverlay.hide();
     this.shopOverlay.hide();
+    this.waveBanner.hide();
     this.gameOverOverlay.hide();
     this.stageClearOverlay.hide();
   }
 
-  private showShop(): void {
+  private showShop(clearedStage: number = this.gameState.stage - 1): void {
     this.shopOverlay.show({
-      clearedStage: this.gameState.stage,
+      clearedStage,
       currency: this.gameState.currency,
       upgrades: this.upgrades.getSnapshots(this.gameState.currency)
     });
   }
 
-  private continueToNextStage(): void {
-    this.stageSystem.setStage(this.gameState.stage);
-    this.enemies?.setStageConfig(this.stageSystem.config);
-    this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
+  private resumeAfterShop(): void {
+    const passedWave = this.gameState.stage - 1;
     this.runState = "playing";
-
-    this.combat?.reset();
-    this.enemies?.deactivateAll();
-    this.projectiles?.deactivateAll();
-    this.enemyProjectiles?.deactivateAll();
-    this.powerUps?.deactivateAll();
-    this.hitFeedback?.deactivateAll();
-    this.player?.reset();
     this.stageClearOverlay.hide();
     this.shopOverlay.hide();
+    this.waveBanner.show(passedWave, this.gameState.stage);
     this.hud.show();
     this.hud.update(this.gameState);
   }

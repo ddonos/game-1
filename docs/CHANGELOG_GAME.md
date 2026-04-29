@@ -1,5 +1,44 @@
 # Game Changelog
 
+## Phase 10A
+
+### What Changed
+
+- Replaced normal Stage Clear / Continue flow with automatic wave progression.
+- Added a short non-blocking wave transition banner.
+- Normal wave transitions now preserve active enemies, power-ups, player projectiles, enemy projectiles, hit feedback, and temporary effects.
+- Next stage config now applies to future spawns while existing enemies keep their spawned behavior.
+- Shop now freezes gameplay between waves without clearing active objects or ticking down effect timers.
+- Skip / Continue from the shop resumes the next wave without clearing pools.
+- Run Complete remains a final blocking overlay.
+
+### Files Changed
+
+- `src/game/GameApp.ts`
+- `src/main.ts`
+- `src/ui/stageClearOverlay.ts`
+- `src/ui/shopOverlay.ts`
+- `src/ui/waveBanner.ts`
+- `src/ui/styles.css`
+- `README.md`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/STAGE_DESIGN.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Run Complete still clears active objects as the final blocking end-of-run state.
+
+### Next Recommended Step
+
+- Playtest whether preserved enemies during wave transitions need a short spawn grace period.
+
 ## Phase 10
 
 ### What Changed

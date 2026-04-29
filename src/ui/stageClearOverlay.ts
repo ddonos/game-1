@@ -18,7 +18,7 @@ export function createStageClearOverlay(
   const overlay = document.createElement("section");
   overlay.className = "stage-clear";
   overlay.hidden = true;
-  overlay.setAttribute("aria-label", "Stage clear");
+  overlay.setAttribute("aria-label", "Run complete");
 
   const title = document.createElement("h1");
   title.className = "stage-clear__title";
@@ -45,15 +45,15 @@ export function createStageClearOverlay(
 
   return {
     show(overlayState) {
-      title.textContent = overlayState.isRunComplete ? "RUN COMPLETE" : "STAGE CLEAR";
+      title.textContent = overlayState.isRunComplete ? "RUN COMPLETE" : "WAVE PASSED";
       stage.value.textContent = String(overlayState.clearedStage);
       score.value.textContent = String(overlayState.state.score);
       currency.value.textContent = String(overlayState.state.currency);
       lives.value.textContent = String(overlayState.state.lives);
-      continueButton.textContent = overlayState.isRunComplete ? "Restart" : "Continue";
+      continueButton.textContent = overlayState.isRunComplete ? "Restart" : "Close";
       hint.textContent = overlayState.isRunComplete
         ? "Press Enter to restart"
-        : "Press Enter to continue";
+        : "Normal waves advance automatically";
       overlay.hidden = false;
       continueButton.focus();
     },

@@ -18,3 +18,5 @@ Phase 9A added no external assets.
 Phase 9B added no external assets.
 
 Phase 10 added generated shop UI/CSS only and no external assets.
+
+Phase 10A added generated wave banner UI/CSS only and no external assets.
