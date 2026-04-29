@@ -1,0 +1,10 @@
+[31m(!) Failed to run dependency scan. Skipping dependency pre-bundling. Error: spawn EPERM
+    at ChildProcess.spawn (node:internal/child_process:421:11)
+    at Object.spawn (node:child_process:796:9)
+    at ensureServiceIsRunning (C:\Projects\game-1\node_modules\esbuild\lib\main.js:2268:29)
+    at Object.context (C:\Projects\game-1\node_modules\esbuild\lib\main.js:2167:33)
+    at prepareEsbuildScanner (file:///C:/Projects/game-1/node_modules/vite/dist/node/chunks/config.js:31458:23)
+    at async scan (file:///C:/Projects/game-1/node_modules/vite/dist/node/chunks/config.js:31384:14)
+    at async file:///C:/Projects/game-1/node_modules/vite/dist/node/chunks/config.js:34115:15[39m
+[2m4:16:13 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31merror while updating dependencies:
+Error: EPERM: operation not permitted, rename 'C:\Projects\game-1\node_modules\.vite\deps_temp_ac572698' -> 'C:\Projects\game-1\node_modules\.vite\deps'[39m
