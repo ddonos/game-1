@@ -16,7 +16,8 @@ export function createHud(root: HTMLElement): HudController {
     score: createHudField("Score"),
     currency: createHudField("Currency"),
     stage: createHudField("Stage"),
-    time: createHudField("Time")
+    time: createHudField("Time"),
+    effects: createHudField("Effects")
   };
 
   for (const field of Object.values(fields)) {
@@ -32,6 +33,7 @@ export function createHud(root: HTMLElement): HudController {
       fields.currency.value.textContent = String(state.currency);
       fields.stage.value.textContent = String(state.stage);
       fields.time.value.textContent = formatStageTime(state.stageTimeRemaining);
+      fields.effects.value.textContent = formatEffects(state.effects);
     },
     show() {
       hud.hidden = false;
@@ -63,4 +65,22 @@ function createHudField(label: string): {
 
 function formatStageTime(timeRemaining: number): string {
   return Math.ceil(Math.max(0, timeRemaining)).toString();
+}
+
+function formatEffects(effects: GameState["effects"]): string {
+  const labels: string[] = [];
+
+  if (effects.rapidFireSeconds > 0) {
+    labels.push(`RF ${Math.ceil(effects.rapidFireSeconds)}`);
+  }
+
+  if (effects.shieldSeconds > 0) {
+    labels.push(`SH ${Math.ceil(effects.shieldSeconds)}`);
+  }
+
+  if (effects.scoreMultiplierSeconds > 0) {
+    labels.push(`2X ${Math.ceil(effects.scoreMultiplierSeconds)}`);
+  }
+
+  return labels.length > 0 ? labels.join(" ") : "-";
 }

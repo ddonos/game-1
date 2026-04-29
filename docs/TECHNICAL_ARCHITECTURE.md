@@ -46,6 +46,10 @@ Enemy firing rules live on enemy archetype config, with per-type stage unlocks, 
 
 Enemy projectile-player collision uses active-only bounding-sphere distance checks with no physics engine or mesh collision. When an enemy projectile hits, combat deactivates it, records one life loss, and the existing player invulnerability/blink flow prevents repeated immediate damage. Enemy projectile updates and enemy firing are state-gated and run only while `GameApp` is in `playing`.
 
+Power-up config lives in `src/config/powerUps.ts`. `PowerUpPool` pre-creates generated pickup visuals, spawns them from deep space on a weighted timer, updates only active pickups, and uses active-only bounding-sphere collision against the player. `EffectSystem` owns temporary player effect state for rapid fire, shield, and score multiplier, plus pending instant repair. Effect timers update only during `playing`, so pause freezes power-up movement and effect duration.
+
+Shield interaction is handled before life loss is consumed: combat records pending damage, then `EffectSystem` can absorb it before `GameApp` reduces lives and starts invulnerability. Score multiplier is applied to pending enemy-destruction score before the HUD state is updated. Active power-ups are cleared on stage clear, run complete, game over, restart, and main menu return; active effects are cleared on game over, restart, and main menu return.
+
 Menu overlays are DOM/CSS modules under `src/ui`: Main Menu, Pause Menu, Game Over, and Stage Clear. `GameApp` owns a small run state union: `mainMenu`, `playing`, `paused`, `stageClear`, `gameOver`, and `runComplete`. Gameplay updates are state-gated so spawning, shooting, movement, combat, hit bursts, and stage timing run only in `playing`. Escape toggles pause only from active gameplay; it does not pause from Main Menu, Game Over, Stage Clear, or Run Complete.
 
 ## Input
@@ -63,4 +67,4 @@ The 30-stage plan should become data-driven later. Stage definitions should cove
 
 ## Assets
 
-No final assets are included through Phase 8. Projectiles, enemy projectiles, enemies, hit feedback, invulnerability feedback, and menu/progression overlays are placeholder visuals generated from Babylon primitives, code effects, or DOM/CSS for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
+No final assets are included through Phase 9. Projectiles, enemy projectiles, enemies, power-ups, hit feedback, invulnerability feedback, and menu/progression overlays are placeholder visuals generated from Babylon primitives, code effects, or DOM/CSS for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.

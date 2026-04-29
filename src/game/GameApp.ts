@@ -5,11 +5,13 @@ import { GAME_CONFIG } from "../config/gameConfig";
 import { getStageConfig } from "../config/stageConfigs";
 import { PlayerShip } from "../entities/PlayerShip";
 import { CombatSystem } from "../systems/CombatSystem";
+import { EffectSystem } from "../systems/EffectSystem";
 import { EnemyProjectilePool } from "../systems/EnemyProjectilePool";
 import { EnemyPool } from "../systems/EnemyPool";
 import { HitFeedbackPool } from "../systems/HitFeedbackPool";
 import { InputController } from "../systems/InputController";
 import { ProjectilePool } from "../systems/ProjectilePool";
+import { PowerUpPool } from "../systems/PowerUpPool";
 import { StageSystem } from "../systems/StageSystem";
 import { Starfield } from "../systems/Starfield";
 import type { GameOverOverlayController } from "../ui/gameOverOverlay";
@@ -37,14 +39,21 @@ export class GameApp {
     score: GAME_CONFIG.initialScore,
     currency: GAME_CONFIG.initialCurrency,
     stage: GAME_CONFIG.initialStage,
-    stageTimeRemaining: getStageConfig(GAME_CONFIG.initialStage).durationSeconds
+    stageTimeRemaining: getStageConfig(GAME_CONFIG.initialStage).durationSeconds,
+    effects: {
+      rapidFireSeconds: 0,
+      shieldSeconds: 0,
+      scoreMultiplierSeconds: 0
+    }
   };
   private readonly resizeObserver: ResizeObserver;
   private combat?: CombatSystem;
+  private effects = new EffectSystem();
   private player?: PlayerShip;
   private enemies?: EnemyPool;
   private enemyProjectiles?: EnemyProjectilePool;
   private hitFeedback?: HitFeedbackPool;
+  private powerUps?: PowerUpPool;
   private projectiles?: ProjectilePool;
   private runState: RunState = "mainMenu";
   private stageSystem = new StageSystem();
@@ -78,6 +87,7 @@ export class GameApp {
     this.enemies = new EnemyPool(scene);
     this.enemyProjectiles = new EnemyProjectilePool(scene);
     this.projectiles = new ProjectilePool(scene);
+    this.powerUps = new PowerUpPool(scene);
     this.hitFeedback = new HitFeedbackPool(scene);
     this.combat = new CombatSystem(
       this.projectiles,
@@ -145,7 +155,13 @@ export class GameApp {
 
       this.player?.update(deltaSeconds, movement);
       this.player?.writeMuzzlePositionToRef(this.fireOrigin);
-      this.projectiles?.update(deltaSeconds, shouldFire, this.fireOrigin);
+      this.effects.update(deltaSeconds);
+      this.projectiles?.update(
+        deltaSeconds,
+        shouldFire,
+        this.fireOrigin,
+        this.effects.getFireCooldownSeconds()
+      );
       this.enemies?.update(deltaSeconds);
       if (this.player && this.enemyProjectiles) {
         this.enemies?.updateFiring(
@@ -155,8 +171,10 @@ export class GameApp {
         );
         this.enemyProjectiles.update(deltaSeconds);
         this.combat?.update(this.player);
+        this.powerUps?.update(deltaSeconds, this.player, this.effects);
       }
       this.applyCombatResults();
+      this.applyPowerUpResults();
       this.hitFeedback?.update(deltaSeconds);
       this.updateStageTimer(deltaSeconds);
       this.starfield?.update(deltaSeconds);
@@ -171,6 +189,7 @@ export class GameApp {
     this.hitFeedback?.dispose();
     this.projectiles?.dispose();
     this.enemyProjectiles?.dispose();
+    this.powerUps?.dispose();
     this.enemies?.dispose();
     this.player?.dispose();
     this.input.dispose();
@@ -220,6 +239,8 @@ export class GameApp {
     this.gameState.score = GAME_CONFIG.initialScore;
     this.gameState.currency = GAME_CONFIG.initialCurrency;
     this.gameState.stage = GAME_CONFIG.initialStage;
+    this.effects.clear();
+    this.gameState.effects = this.effects.getSnapshot();
     this.stageSystem.setStage(this.gameState.stage);
     this.enemies?.setStageConfig(this.stageSystem.config);
     this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
@@ -228,6 +249,7 @@ export class GameApp {
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
     this.enemyProjectiles?.deactivateAll();
+    this.powerUps?.deactivateAll();
     this.hitFeedback?.deactivateAll();
     this.player?.reset();
     this.hud.update(this.gameState);
@@ -253,6 +275,7 @@ export class GameApp {
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
     this.enemyProjectiles?.deactivateAll();
+    this.powerUps?.deactivateAll();
     this.hitFeedback?.deactivateAll();
     this.player?.reset();
     this.stageClearOverlay.hide();
@@ -265,6 +288,8 @@ export class GameApp {
       return;
     }
 
+    this.combat.applyScoreMultiplier(this.effects.getScoreMultiplier());
+    this.combat.absorbPendingDamage(this.effects);
     const score = this.combat.consumeScore();
     const currency = this.combat.consumeCurrency();
     const lifeLoss = this.combat.consumeLifeLoss();
@@ -287,6 +312,22 @@ export class GameApp {
     }
   }
 
+  private applyPowerUpResults(): void {
+    const repair = this.effects.consumeRepair();
+    this.gameState.effects = this.effects.getSnapshot();
+
+    if (repair > 0) {
+      this.gameState.lives = Math.min(
+        GAME_CONFIG.initialLives,
+        this.gameState.lives + repair
+      );
+    }
+
+    if (repair > 0 || hasActiveEffect(this.gameState.effects)) {
+      this.hud.update(this.gameState);
+    }
+  }
+
   private updateStageTimer(deltaSeconds: number): void {
     if (this.runState !== "playing") {
       return;
@@ -306,7 +347,11 @@ export class GameApp {
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
     this.enemyProjectiles?.deactivateAll();
+    this.powerUps?.deactivateAll();
+    this.effects.clear();
+    this.gameState.effects = this.effects.getSnapshot();
     this.hitFeedback?.deactivateAll();
+    this.hud.update(this.gameState);
     this.pauseMenuOverlay.hide();
     this.stageClearOverlay.hide();
     this.gameOverOverlay.show(this.gameState);
@@ -318,6 +363,7 @@ export class GameApp {
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
     this.enemyProjectiles?.deactivateAll();
+    this.powerUps?.deactivateAll();
     this.hitFeedback?.deactivateAll();
     this.stageClearOverlay.show({
       clearedStage: this.gameState.stage,
@@ -332,4 +378,12 @@ export class GameApp {
     this.gameOverOverlay.hide();
     this.stageClearOverlay.hide();
   }
+}
+
+function hasActiveEffect(effects: GameState["effects"]): boolean {
+  return (
+    effects.rapidFireSeconds > 0 ||
+    effects.shieldSeconds > 0 ||
+    effects.scoreMultiplierSeconds > 0
+  );
 }

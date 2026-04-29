@@ -17,12 +17,17 @@ export class ProjectilePool {
     }
   }
 
-  update(deltaSeconds: number, shouldFire: boolean, origin: Vector3): void {
+  update(
+    deltaSeconds: number,
+    shouldFire: boolean,
+    origin: Vector3,
+    fireCooldownSeconds: number = GAME_CONFIG.projectiles.fireCooldownSeconds
+  ): void {
     this.cooldownRemaining = Math.max(0, this.cooldownRemaining - deltaSeconds);
 
     if (shouldFire && this.cooldownRemaining === 0) {
       this.fire(origin);
-      this.cooldownRemaining = GAME_CONFIG.projectiles.fireCooldownSeconds;
+      this.cooldownRemaining = fireCooldownSeconds;
     }
 
     for (const projectile of this.projectiles) {

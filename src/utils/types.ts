@@ -4,4 +4,9 @@ export type GameState = {
   currency: number;
   stage: number;
   stageTimeRemaining: number;
+  effects: {
+    rapidFireSeconds: number;
+    shieldSeconds: number;
+    scoreMultiplierSeconds: number;
+  };
 };

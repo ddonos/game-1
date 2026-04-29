@@ -51,6 +51,17 @@ The HUD shows the remaining stage time. During active gameplay, the timer counts
 
 Game over still has priority: if lives reach 0 before the timer ends, the game over flow appears instead of stage clear.
 
+## Power-Ups
+
+Generated placeholder power-ups now spawn from deep space, move toward the player, and are collected by direct player contact. Current power-ups are repair, rapid fire, shield, and score multiplier.
+
+- Repair restores 1 life immediately and cannot exceed the 3-life maximum.
+- Rapid fire temporarily reduces the player fire cooldown.
+- Shield temporarily absorbs/prevents player damage from enemy contact or enemy projectiles.
+- Score multiplier temporarily increases score gained from destroyed enemies.
+
+Temporary effects expire automatically. Shop and permanent upgrades are still future work.
+
 ## Menus
 
 The game now starts from a Main Menu instead of immediately starting gameplay. The Main Menu includes Play, How to Play, and a Missions placeholder panel. The How to Play panel lists movement, firing, survival, enemy destruction, enemy avoidance, and stage-clear goals. The Missions panel is placeholder only and does not implement mission logic yet.
@@ -59,4 +70,4 @@ Pause Menu is available only during active gameplay with Escape. While Main Menu
 
 ## Later Systems
 
-Object pooling is now introduced for player projectiles and placeholder enemies. Pooling is still required later for hazards, effects, pickups, and any repeated temporary objects. This is important for smooth iframe/html5 performance and to avoid garbage collection spikes.
+Object pooling is now introduced for player projectiles, enemy projectiles, placeholder enemies, and power-ups. Pooling is still required later for hazards, effects, pickups, and any repeated temporary objects. This is important for smooth iframe/html5 performance and to avoid garbage collection spikes.

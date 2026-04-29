@@ -2,6 +2,7 @@ import { GAME_CONFIG } from "../config/gameConfig";
 import type { PlayerShip } from "../entities/PlayerShip";
 import { EnemyPool } from "./EnemyPool";
 import { EnemyProjectilePool } from "./EnemyProjectilePool";
+import type { EffectSystem } from "./EffectSystem";
 import { HitFeedbackPool } from "./HitFeedbackPool";
 import { ProjectilePool } from "./ProjectilePool";
 
@@ -21,6 +22,20 @@ export class CombatSystem {
     this.checkProjectileEnemyCollisions();
     this.checkEnemyProjectilePlayerCollisions(player);
     this.checkEnemyPlayerCollisions(player);
+  }
+
+  applyScoreMultiplier(multiplier: number): void {
+    if (multiplier === 1 || this.pendingScore === 0) {
+      return;
+    }
+
+    this.pendingScore = Math.round(this.pendingScore * multiplier);
+  }
+
+  absorbPendingDamage(effects: EffectSystem): void {
+    while (this.pendingLifeLoss > 0 && effects.absorbDamage()) {
+      this.pendingLifeLoss -= 1;
+    }
   }
 
   consumeScore(): number {

@@ -1,5 +1,55 @@
 # Game Changelog
 
+## Phase 9
+
+### What Changed
+
+- Added generated placeholder power-up entity visuals.
+- Added pooled `PowerUpPool` with reusable active/inactive pickups.
+- Added weighted power-up spawning from deep space.
+- Added player collection using simple bounding-sphere collision.
+- Added repair, rapid fire, shield, and score multiplier power-up types.
+- Added temporary effect handling through `EffectSystem`.
+- Rapid fire temporarily reduces player fire cooldown.
+- Shield absorbs/prevents damage from direct enemy contact and enemy projectiles.
+- Score multiplier increases score gained from enemy destruction.
+- Repair restores 1 life without exceeding the 3-life maximum.
+- Added a compact HUD effects display with remaining effect time.
+- Power-up updates and effect timers are state-gated to active gameplay.
+
+### Files Changed
+
+- `src/config/powerUps.ts`
+- `src/entities/PowerUp.ts`
+- `src/game/GameApp.ts`
+- `src/systems/CombatSystem.ts`
+- `src/systems/EffectSystem.ts`
+- `src/systems/PowerUpPool.ts`
+- `src/systems/ProjectilePool.ts`
+- `src/ui/hud.ts`
+- `src/ui/styles.css`
+- `src/utils/types.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/STAGE_DESIGN.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Power-up visuals and tuning are placeholders.
+- Shop, permanent upgrades, boss fights, mission logic, audio, saving/loading, leaderboard, and final assets are not implemented in Phase 9.
+- Power-up frequency is global for now rather than stage-specific.
+
+### Next Recommended Step
+
+- Add stage-tuned pickup frequency or a first pass at mission tracking.
+
 ## Phase 8
 
 ### What Changed
