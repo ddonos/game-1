@@ -1,5 +1,51 @@
 # Game Changelog
 
+## Phase 8
+
+### What Changed
+
+- Added generated placeholder enemy projectiles.
+- Added `EnemyProjectilePool` with pre-created reusable projectiles.
+- Added enemy firing rules to enemy archetype config.
+- Added stage fire-rate multiplier support for later-stage shooting pressure.
+- Active enemies can now fire pooled projectiles toward the player.
+- Added enemy projectile-player bounding-sphere collision.
+- Enemy projectile hits reduce lives, update HUD, trigger invulnerability, and can trigger game over.
+- Enemy projectiles are cleared on stage clear, game over, run complete, restart, and main menu return.
+- Enemy firing and enemy projectile updates are state-gated to active gameplay only.
+
+### Files Changed
+
+- `src/config/enemyTypes.ts`
+- `src/config/gameConfig.ts`
+- `src/config/stageConfigs.ts`
+- `src/entities/Enemy.ts`
+- `src/entities/EnemyProjectile.ts`
+- `src/game/GameApp.ts`
+- `src/systems/CombatSystem.ts`
+- `src/systems/EnemyPool.ts`
+- `src/systems/EnemyProjectilePool.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/STAGE_DESIGN.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Boss fights, shop, mission logic, power-ups, audio, saving/loading, leaderboard, and final assets are not implemented in Phase 8.
+- Enemy projectile visuals and firing patterns are placeholders.
+- Boss stages remain marked only and use temporary normal spawning.
+
+### Next Recommended Step
+
+- Add richer scripted spawn and firing patterns from stage config, or begin a boss-stage placeholder flow.
+
 ## Phase 7
 
 ### What Changed

@@ -6,6 +6,7 @@ import { ENEMY_TYPE_ORDER, ENEMY_TYPES, type EnemyTypeId } from "../config/enemy
 import { getStageConfig, type StageConfig } from "../config/stageConfigs";
 import { Enemy } from "../entities/Enemy";
 import { randomRange } from "../utils/math";
+import type { EnemyProjectilePool } from "./EnemyProjectilePool";
 
 export class EnemyPool {
   private readonly enemies: Enemy[] = [];
@@ -39,6 +40,16 @@ export class EnemyPool {
 
     for (const enemy of this.enemies) {
       enemy.update(deltaSeconds);
+    }
+  }
+
+  updateFiring(
+    deltaSeconds: number,
+    playerPosition: Vector3,
+    enemyProjectiles: EnemyProjectilePool
+  ): void {
+    for (const enemy of this.enemies) {
+      enemy.updateFiring(deltaSeconds, playerPosition, enemyProjectiles);
     }
   }
 

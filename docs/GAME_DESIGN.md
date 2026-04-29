@@ -31,7 +31,9 @@ Player projectiles can now destroy enemies with simple forgiving collision. Dest
 
 Enemies can now damage the player on direct collision. A collision removes the enemy, reduces lives by 1, and briefly activates player invulnerability so overlapping enemies cannot drain multiple lives immediately.
 
-Enemies currently do not shoot. Enemy visuals, hit feedback, and invulnerability feedback are generated Babylon primitives/code effects only and are not final assets.
+Enemies can now shoot generated placeholder projectiles. Enemy projectiles travel toward the player/camera side, can damage the player, and trigger the same invulnerability window as direct enemy contact.
+
+Enemy shooting is still placeholder/generated visual only. Bosses, shop, missions, power-ups, final assets, and richer enemy behaviors remain future work.
 
 ## Enemy Variants
 
@@ -41,7 +43,7 @@ Three generated placeholder enemy variants now exist:
 - Fast: faster, smaller, lower reward, and 1 hit point.
 - Tank: slower, larger, higher reward, and multiple hit points.
 
-Projectile hits reduce enemy health. Score and currency are granted only when an enemy is destroyed. Enemy shooting is still not implemented.
+Projectile hits reduce enemy health. Score and currency are granted only when an enemy is destroyed.
 
 ## Current Stage Flow
 

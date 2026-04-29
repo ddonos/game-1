@@ -12,6 +12,7 @@ import {
   type EnemyTypeId
 } from "../config/enemyTypes";
 import type { StageConfig } from "../config/stageConfigs";
+import type { EnemyProjectilePool } from "../systems/EnemyProjectilePool";
 
 export class Enemy {
   private readonly root: TransformNode;
@@ -21,6 +22,13 @@ export class Enemy {
   private collisionRadiusValue = ENEMY_TYPES.basic.collisionRadius;
   private currentHealth = ENEMY_TYPES.basic.health;
   private currencyRewardValue = ENEMY_TYPES.basic.currencyReward;
+  private fireCooldownRemaining = 0;
+  private fireCooldownSeconds = ENEMY_TYPES.basic.firing.cooldownSeconds;
+  private fireEnabled = false;
+  private projectileRadius = ENEMY_TYPES.basic.firing.projectileRadius;
+  private projectileScale = ENEMY_TYPES.basic.firing.projectileScale;
+  private projectileSpeed = ENEMY_TYPES.basic.firing.projectileSpeed;
+  private projectileType = ENEMY_TYPES.basic.id;
   private scoreRewardValue = ENEMY_TYPES.basic.scoreReward;
   private speed: number = GAME_CONFIG.enemies.baseSpeed;
 
@@ -87,6 +95,14 @@ export class Enemy {
     this.active = true;
     this.currentHealth = type.health;
     this.collisionRadiusValue = type.collisionRadius;
+    this.fireEnabled = stageConfig.stageNumber >= type.firing.enabledFromStage;
+    this.fireCooldownSeconds =
+      type.firing.cooldownSeconds / stageConfig.enemyFireRateMultiplier;
+    this.fireCooldownRemaining = this.fireCooldownSeconds * randomCooldownOffset();
+    this.projectileRadius = type.firing.projectileRadius;
+    this.projectileScale = type.firing.projectileScale;
+    this.projectileSpeed = type.firing.projectileSpeed;
+    this.projectileType = type.id;
     this.speed =
       GAME_CONFIG.enemies.baseSpeed *
       type.speedMultiplier *
@@ -120,8 +136,35 @@ export class Enemy {
     }
   }
 
+  updateFiring(
+    deltaSeconds: number,
+    playerPosition: Vector3,
+    enemyProjectiles: EnemyProjectilePool
+  ): void {
+    if (!this.active || !this.fireEnabled) {
+      return;
+    }
+
+    this.fireCooldownRemaining -= deltaSeconds;
+
+    if (this.fireCooldownRemaining > 0) {
+      return;
+    }
+
+    enemyProjectiles.fire({
+      origin: this.root.position,
+      target: playerPosition,
+      speed: this.projectileSpeed,
+      collisionRadius: this.projectileRadius,
+      scale: this.projectileScale,
+      type: this.projectileType
+    });
+    this.fireCooldownRemaining = this.fireCooldownSeconds;
+  }
+
   deactivate(): void {
     this.active = false;
+    this.fireCooldownRemaining = 0;
     this.root.setEnabled(false);
   }
 
@@ -153,6 +196,10 @@ export class Enemy {
       fin.material = material;
     }
   }
+}
+
+function randomCooldownOffset(): number {
+  return 0.45 + Math.random() * 0.7;
 }
 
 function createMaterial(scene: Scene, type: EnemyTypeConfig): StandardMaterial {

@@ -42,6 +42,10 @@ export const GAME_CONFIG = {
     collisionRadius: 0.32,
     damage: 1
   },
+  enemyProjectiles: {
+    poolSize: 36,
+    maxTravelDistance: 72
+  },
   enemies: {
     poolSize: 10,
     baseSpeed: 8,

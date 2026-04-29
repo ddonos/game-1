@@ -1,6 +1,7 @@
 import { GAME_CONFIG } from "../config/gameConfig";
 import type { PlayerShip } from "../entities/PlayerShip";
 import { EnemyPool } from "./EnemyPool";
+import { EnemyProjectilePool } from "./EnemyProjectilePool";
 import { HitFeedbackPool } from "./HitFeedbackPool";
 import { ProjectilePool } from "./ProjectilePool";
 
@@ -11,12 +12,14 @@ export class CombatSystem {
 
   constructor(
     private readonly projectiles: ProjectilePool,
+    private readonly enemyProjectiles: EnemyProjectilePool,
     private readonly enemies: EnemyPool,
     private readonly hitFeedback: HitFeedbackPool
   ) {}
 
   update(player: PlayerShip): void {
     this.checkProjectileEnemyCollisions();
+    this.checkEnemyProjectilePlayerCollisions(player);
     this.checkEnemyPlayerCollisions(player);
   }
 
@@ -96,6 +99,31 @@ export class CombatSystem {
       if (distanceSquared <= radius * radius) {
         this.hitFeedback.spawn(enemy.position);
         enemy.deactivate();
+        this.pendingLifeLoss += 1;
+        break;
+      }
+    }
+  }
+
+  private checkEnemyProjectilePlayerCollisions(player: PlayerShip): void {
+    if (player.isInvulnerable) {
+      return;
+    }
+
+    for (const projectile of this.enemyProjectiles.getActiveProjectiles()) {
+      if (!projectile.isActive) {
+        continue;
+      }
+
+      const radius = player.collisionRadius + projectile.collisionRadius;
+      const dx = player.position.x - projectile.position.x;
+      const dy = player.position.y - projectile.position.y;
+      const dz = player.position.z - projectile.position.z;
+      const distanceSquared = dx * dx + dy * dy + dz * dz;
+
+      if (distanceSquared <= radius * radius) {
+        this.hitFeedback.spawn(projectile.position);
+        projectile.deactivate();
         this.pendingLifeLoss += 1;
         break;
       }

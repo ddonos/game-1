@@ -5,6 +5,7 @@ import { GAME_CONFIG } from "../config/gameConfig";
 import { getStageConfig } from "../config/stageConfigs";
 import { PlayerShip } from "../entities/PlayerShip";
 import { CombatSystem } from "../systems/CombatSystem";
+import { EnemyProjectilePool } from "../systems/EnemyProjectilePool";
 import { EnemyPool } from "../systems/EnemyPool";
 import { HitFeedbackPool } from "../systems/HitFeedbackPool";
 import { InputController } from "../systems/InputController";
@@ -42,6 +43,7 @@ export class GameApp {
   private combat?: CombatSystem;
   private player?: PlayerShip;
   private enemies?: EnemyPool;
+  private enemyProjectiles?: EnemyProjectilePool;
   private hitFeedback?: HitFeedbackPool;
   private projectiles?: ProjectilePool;
   private runState: RunState = "mainMenu";
@@ -74,9 +76,15 @@ export class GameApp {
     const scene = createScene(this.engine);
     this.player = new PlayerShip(scene);
     this.enemies = new EnemyPool(scene);
+    this.enemyProjectiles = new EnemyProjectilePool(scene);
     this.projectiles = new ProjectilePool(scene);
     this.hitFeedback = new HitFeedbackPool(scene);
-    this.combat = new CombatSystem(this.projectiles, this.enemies, this.hitFeedback);
+    this.combat = new CombatSystem(
+      this.projectiles,
+      this.enemyProjectiles,
+      this.enemies,
+      this.hitFeedback
+    );
     this.starfield = new Starfield();
     void this.starfield.create(scene);
 
@@ -139,7 +147,13 @@ export class GameApp {
       this.player?.writeMuzzlePositionToRef(this.fireOrigin);
       this.projectiles?.update(deltaSeconds, shouldFire, this.fireOrigin);
       this.enemies?.update(deltaSeconds);
-      if (this.player) {
+      if (this.player && this.enemyProjectiles) {
+        this.enemies?.updateFiring(
+          deltaSeconds,
+          this.player.position,
+          this.enemyProjectiles
+        );
+        this.enemyProjectiles.update(deltaSeconds);
         this.combat?.update(this.player);
       }
       this.applyCombatResults();
@@ -156,6 +170,7 @@ export class GameApp {
     this.starfield?.dispose();
     this.hitFeedback?.dispose();
     this.projectiles?.dispose();
+    this.enemyProjectiles?.dispose();
     this.enemies?.dispose();
     this.player?.dispose();
     this.input.dispose();
@@ -212,6 +227,7 @@ export class GameApp {
     this.combat?.reset();
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
+    this.enemyProjectiles?.deactivateAll();
     this.hitFeedback?.deactivateAll();
     this.player?.reset();
     this.hud.update(this.gameState);
@@ -236,6 +252,7 @@ export class GameApp {
     this.combat?.reset();
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
+    this.enemyProjectiles?.deactivateAll();
     this.hitFeedback?.deactivateAll();
     this.player?.reset();
     this.stageClearOverlay.hide();
@@ -288,6 +305,7 @@ export class GameApp {
     this.runState = "gameOver";
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
+    this.enemyProjectiles?.deactivateAll();
     this.hitFeedback?.deactivateAll();
     this.pauseMenuOverlay.hide();
     this.stageClearOverlay.hide();
@@ -299,6 +317,7 @@ export class GameApp {
     this.runState = isRunComplete ? "runComplete" : "stageClear";
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
+    this.enemyProjectiles?.deactivateAll();
     this.hitFeedback?.deactivateAll();
     this.stageClearOverlay.show({
       clearedStage: this.gameState.stage,

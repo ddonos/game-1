@@ -41,4 +41,4 @@ The full game is planned as a 30-stage run with a maximum of 3 lives. The curren
 
 ## Future Data-Driven Plan
 
-Stage metadata now lives in TypeScript config and defines duration, boss flag, spawn interval, enemy speed multiplier, weighted enemy mix, and reward multipliers. Later phases should expand this into richer spawn plans, hazard plans, boss behavior, reward tuning, and presentation notes.
+Stage metadata now lives in TypeScript config and defines duration, boss flag, spawn interval, enemy speed multiplier, weighted enemy mix, reward multipliers, and enemy shooting pressure. Later stages may increase shooting pressure through stage fire-rate multipliers. Later phases should expand this into richer spawn plans, hazard plans, boss behavior, reward tuning, and presentation notes.

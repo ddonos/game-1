@@ -13,6 +13,7 @@ export type StageConfig = {
   enemyTypeWeights: EnemyWeights;
   scoreMultiplier: number;
   currencyMultiplier: number;
+  enemyFireRateMultiplier: number;
   bossStage: boolean;
 };
 
@@ -71,6 +72,7 @@ function stage(
   bossStage = false
 ): StageConfig {
   const rewardMultiplier = 1 + Math.floor((stageNumber - 1) / 5) * 0.1;
+  const enemyFireRateMultiplier = Math.min(1.9, 0.75 + stageNumber * 0.04);
 
   return {
     stageNumber,
@@ -83,6 +85,7 @@ function stage(
     enemyTypeWeights,
     scoreMultiplier: rewardMultiplier,
     currencyMultiplier: rewardMultiplier,
+    enemyFireRateMultiplier,
     bossStage
   };
 }

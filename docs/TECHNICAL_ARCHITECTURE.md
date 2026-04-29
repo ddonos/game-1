@@ -42,6 +42,10 @@ Stage data lives in `src/config/stageConfigs.ts`. Each stage config defines stag
 
 Enemy spawning is weighted by the active stage config. `EnemyPool` keeps pooled enemy instances and applies the selected archetype plus current stage multipliers on spawn. Enemy destruction is health-based: projectile hits reduce health, and rewards by enemy type are granted only when health reaches zero.
 
+Enemy firing rules live on enemy archetype config, with per-type stage unlocks, cooldowns, projectile speed, collision radius, scale, and color. Stage config includes an enemy fire-rate multiplier for later-stage pressure. `EnemyProjectilePool` pre-creates a limited pool of generated projectiles, updates only active projectiles, and clears them on stage clear, game over, run restart, main menu return, and run complete.
+
+Enemy projectile-player collision uses active-only bounding-sphere distance checks with no physics engine or mesh collision. When an enemy projectile hits, combat deactivates it, records one life loss, and the existing player invulnerability/blink flow prevents repeated immediate damage. Enemy projectile updates and enemy firing are state-gated and run only while `GameApp` is in `playing`.
+
 Menu overlays are DOM/CSS modules under `src/ui`: Main Menu, Pause Menu, Game Over, and Stage Clear. `GameApp` owns a small run state union: `mainMenu`, `playing`, `paused`, `stageClear`, `gameOver`, and `runComplete`. Gameplay updates are state-gated so spawning, shooting, movement, combat, hit bursts, and stage timing run only in `playing`. Escape toggles pause only from active gameplay; it does not pause from Main Menu, Game Over, Stage Clear, or Run Complete.
 
 ## Input
@@ -59,4 +63,4 @@ The 30-stage plan should become data-driven later. Stage definitions should cove
 
 ## Assets
 
-No final assets are included through Phase 7. Projectiles, enemies, hit feedback, invulnerability feedback, and menu/progression overlays are placeholder visuals generated from Babylon primitives, code effects, or DOM/CSS for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
+No final assets are included through Phase 8. Projectiles, enemy projectiles, enemies, hit feedback, invulnerability feedback, and menu/progression overlays are placeholder visuals generated from Babylon primitives, code effects, or DOM/CSS for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
