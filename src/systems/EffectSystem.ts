@@ -12,7 +12,6 @@ export class EffectSystem {
   private shieldRemaining = 0;
   private scoreMultiplierRemaining = 0;
   private pendingRepair = 0;
-  private shieldCharges = 0;
 
   update(deltaSeconds: number): void {
     this.rapidFireRemaining = Math.max(0, this.rapidFireRemaining - deltaSeconds);
@@ -21,10 +20,6 @@ export class EffectSystem {
       0,
       this.scoreMultiplierRemaining - deltaSeconds
     );
-
-    if (this.shieldRemaining === 0) {
-      this.shieldCharges = 0;
-    }
   }
 
   applyPowerUp(type: PowerUpTypeId): void {
@@ -42,7 +37,6 @@ export class EffectSystem {
 
     if (type === "shield") {
       this.shieldRemaining = config.durationSeconds;
-      this.shieldCharges = config.effectStrength;
       return;
     }
 
@@ -75,17 +69,7 @@ export class EffectSystem {
   }
 
   absorbDamage(): boolean {
-    if (this.shieldRemaining <= 0 || this.shieldCharges <= 0) {
-      return false;
-    }
-
-    this.shieldCharges -= 1;
-
-    if (this.shieldCharges <= 0) {
-      this.shieldRemaining = 0;
-    }
-
-    return true;
+    return this.shieldRemaining > 0;
   }
 
   clear(): void {
@@ -93,7 +77,6 @@ export class EffectSystem {
     this.shieldRemaining = 0;
     this.scoreMultiplierRemaining = 0;
     this.pendingRepair = 0;
-    this.shieldCharges = 0;
   }
 
   getSnapshot(): ActiveEffectSnapshot {

@@ -57,7 +57,7 @@ Generated placeholder power-ups now spawn from deep space, move toward the playe
 
 - Repair restores 1 life immediately and cannot exceed the 3-life maximum.
 - Rapid fire temporarily reduces the player fire cooldown.
-- Shield temporarily absorbs/prevents player damage from enemy contact or enemy projectiles.
+- Shield blocks player damage from enemy contact and enemy projectiles for its active duration.
 - Score multiplier temporarily increases score gained from destroyed enemies.
 
 Temporary effects expire automatically. Shop and permanent upgrades are still future work.

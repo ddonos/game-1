@@ -1,5 +1,34 @@
 # Game Changelog
 
+## Phase 9A
+
+### What Changed
+
+- Fixed shield behavior so it blocks all player damage for its full active duration.
+- Shield no longer deactivates after the first blocked direct enemy hit or enemy projectile hit.
+- Existing hit cleanup remains: direct enemy collisions still deactivate enemies, and enemy projectile hits still deactivate projectiles.
+- Invulnerability is not triggered when shield blocks damage.
+
+### Files Changed
+
+- `src/systems/EffectSystem.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Shield visuals remain a placeholder HUD timer only.
+
+### Next Recommended Step
+
+- Add a lightweight in-scene shield visual around the player while shield is active.
+
 ## Phase 9
 
 ### What Changed

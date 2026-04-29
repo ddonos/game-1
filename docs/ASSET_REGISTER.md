@@ -12,3 +12,5 @@ Commercial delivery requires every asset to be tracked here before use.
 Phase 1 player projectiles, Phase 2 enemies, Phase 3 hit feedback, Phase 4 invulnerability/game-over feedback, Phase 5 stage-clear/progression feedback, Phase 6 menu feedback, Phase 7 enemy variant visuals, Phase 8 enemy projectile visuals, and Phase 9 power-up/effect visuals are also generated placeholder visuals or DOM effects only and are not final external assets.
 
 Future entries must include licence details, attribution requirements, purchase records when applicable, modification notes, and whether the asset is cleared for commercial distribution.
+
+Phase 9A added no external assets.
