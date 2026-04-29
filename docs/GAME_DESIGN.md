@@ -24,7 +24,9 @@ Shooting uses Spacebar as the primary fire input. Holding Spacebar fires repeate
 
 Placeholder enemies now spawn from the front/deep space area at varied X and Y positions within the visible play area. They move toward the player along the Z axis and deactivate after passing the player.
 
-Enemies currently do not shoot, collide with projectiles, damage the player, grant score, or grant currency. Enemy visuals are generated Babylon primitives only and are not final assets.
+Player projectiles can now destroy enemies with simple forgiving collision. Destroyed enemies grant score and currency immediately, and the HUD updates as rewards are earned.
+
+Enemies currently do not shoot or damage the player. Enemy visuals and hit feedback are generated Babylon primitives only and are not final assets.
 
 ## Later Systems
 

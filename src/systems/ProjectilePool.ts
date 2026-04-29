@@ -30,6 +30,10 @@ export class ProjectilePool {
     }
   }
 
+  getActiveProjectiles(): readonly Projectile[] {
+    return this.projectiles;
+  }
+
   dispose(): void {
     for (const projectile of this.projectiles) {
       projectile.dispose();

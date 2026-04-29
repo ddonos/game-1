@@ -50,6 +50,14 @@ export class Enemy {
     return this.active;
   }
 
+  get position(): Vector3 {
+    return this.root.position;
+  }
+
+  get collisionRadius(): number {
+    return GAME_CONFIG.enemies.collisionRadius;
+  }
+
   spawn(position: Vector3): void {
     this.active = true;
     this.root.position.copyFrom(position);

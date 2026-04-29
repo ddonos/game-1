@@ -30,6 +30,8 @@ Projectile pooling is implemented for player bullets/projectiles. A limited pool
 
 Enemy pooling is implemented for placeholder enemies. A limited pool is pre-created, inactive enemies are disabled and skipped, and the spawn system reuses available enemies at a readable interval. Enemies spawn from deep space with varied X/Y positions, move toward the player along the Z axis, and deactivate after passing the player.
 
+Combat uses simple bounding-sphere distance checks between active player projectiles and active enemies only. It does not use Babylon mesh collision or a physics engine. On hit, the combat system deactivates the projectile and enemy, spawns a small pooled placeholder hit burst, records score/currency rewards, and `GameApp` applies those rewards to the shared HUD state.
+
 ## Input
 
 - WASD and arrow keys move the player.
@@ -42,4 +44,4 @@ The 30-stage plan should become data-driven later. Stage definitions should cove
 
 ## Assets
 
-No final assets are included through Phase 2. Projectiles and enemies are placeholder visuals generated from Babylon primitives for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
+No final assets are included through Phase 3. Projectiles, enemies, and hit feedback are placeholder visuals generated from Babylon primitives for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.

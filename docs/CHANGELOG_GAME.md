@@ -1,5 +1,47 @@
 # Game Changelog
 
+## Phase 3
+
+### What Changed
+
+- Added simple projectile-enemy collision using bounding-sphere distance checks.
+- Active projectiles are checked only against active enemies; no mesh collision or physics engine is used.
+- Projectile hits now deactivate the projectile and enemy so both pools remain reusable.
+- Destroyed enemies grant score and currency rewards from config.
+- HUD score and currency update immediately after rewards are applied.
+- Added a tiny pooled placeholder hit burst for lightweight destruction feedback.
+
+### Files Changed
+
+- `src/config/gameConfig.ts`
+- `src/entities/Enemy.ts`
+- `src/entities/HitBurst.ts`
+- `src/entities/Projectile.ts`
+- `src/game/GameApp.ts`
+- `src/systems/CombatSystem.ts`
+- `src/systems/EnemyPool.ts`
+- `src/systems/HitFeedbackPool.ts`
+- `src/systems/ProjectilePool.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Enemies do not shoot or damage the player yet.
+- Lives loss, game over, stage timer, bosses, missions, shop, power-ups, audio, and final assets are not implemented in Phase 3.
+- Hit feedback is a generated placeholder, not a final explosion or effect system.
+
+### Next Recommended Step
+
+- Add player damage from enemies that pass or contact the player, including lives and game-over flow.
+
 ## Phase 2
 
 ### What Changed

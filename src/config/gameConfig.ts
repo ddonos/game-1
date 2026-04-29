@@ -39,11 +39,15 @@ export const GAME_CONFIG = {
     poolSize: 24,
     speed: 44,
     maxTravelDistance: 70,
-    fireCooldownSeconds: 0.16
+    fireCooldownSeconds: 0.16,
+    collisionRadius: 0.32
   },
   enemies: {
     poolSize: 10,
     speed: 8,
+    collisionRadius: 0.72,
+    scoreReward: 100,
+    currencyReward: 3,
     spawnZ: 54,
     deactivateZ: -9,
     spawnIntervalSeconds: {
@@ -55,5 +59,11 @@ export const GAME_CONFIG = {
       yMin: -2.1,
       yMax: 2.5
     }
+  },
+  hitFeedback: {
+    poolSize: 8,
+    durationSeconds: 0.16,
+    startScale: 0.35,
+    endScale: 1.15
   }
 } as const;

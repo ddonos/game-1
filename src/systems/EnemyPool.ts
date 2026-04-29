@@ -34,6 +34,10 @@ export class EnemyPool {
     }
   }
 
+  getActiveEnemies(): readonly Enemy[] {
+    return this.enemies;
+  }
+
   dispose(): void {
     for (const enemy of this.enemies) {
       enemy.dispose();

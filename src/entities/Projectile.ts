@@ -38,6 +38,14 @@ export class Projectile {
     return this.active;
   }
 
+  get position(): Vector3 {
+    return this.mesh.position;
+  }
+
+  get collisionRadius(): number {
+    return GAME_CONFIG.projectiles.collisionRadius;
+  }
+
   fire(origin: Vector3): void {
     this.active = true;
     this.travelDistance = 0;
