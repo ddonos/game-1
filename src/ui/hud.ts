@@ -13,7 +13,8 @@ export function createHud(root: HTMLElement): HudController {
     lives: createHudField("Lives"),
     score: createHudField("Score"),
     currency: createHudField("Currency"),
-    stage: createHudField("Stage")
+    stage: createHudField("Stage"),
+    time: createHudField("Time")
   };
 
   for (const field of Object.values(fields)) {
@@ -28,6 +29,7 @@ export function createHud(root: HTMLElement): HudController {
       fields.score.value.textContent = String(state.score);
       fields.currency.value.textContent = String(state.currency);
       fields.stage.value.textContent = String(state.stage);
+      fields.time.value.textContent = formatStageTime(state.stageTimeRemaining);
     }
   };
 }
@@ -49,4 +51,8 @@ function createHudField(label: string): {
 
   element.append(labelElement, value);
   return { element, value };
+}
+
+function formatStageTime(timeRemaining: number): string {
+  return Math.ceil(Math.max(0, timeRemaining)).toString();
 }

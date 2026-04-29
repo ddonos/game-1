@@ -36,12 +36,15 @@ On projectile hit, the combat system deactivates the projectile and enemy, spawn
 
 Player invulnerability is tracked on the player entity after damage. While invulnerable, enemy-player collisions do not reduce lives, and the player ship blinks using generated visibility toggles. Game over is a simple run state in `GameApp`: active gameplay updates pause, spawning/shooting stop, pools are cleared, and a DOM overlay shows final score/currency. Restart via `R` or the overlay button resets run state, clears active pools, resets the player, hides the overlay, and resumes gameplay.
 
+Stage timing is handled by `StageSystem`. It owns the current stage countdown and exposes a simple completion signal. `GameApp` wires that into run progression state: active gameplay updates the timer, stage clear pauses gameplay, clears active pools, shows a DOM Stage Clear overlay, and waits for Enter or the Continue button. Continuing increments the stage, resets the timer to 35 seconds, resets the player position, preserves lives/score/currency, hides the overlay, and resumes gameplay. If the cleared stage is the configured final planned stage, the same overlay shows a temporary Run Complete message.
+
 ## Input
 
 - WASD and arrow keys move the player.
 - Spacebar fires forward into the scene with a cooldown for held firing.
 - Pointer press can trigger a simple single shot for mouse or touch embeds.
 - R restarts after game over.
+- Enter continues after stage clear.
 
 ## Future Data
 
@@ -49,4 +52,4 @@ The 30-stage plan should become data-driven later. Stage definitions should cove
 
 ## Assets
 
-No final assets are included through Phase 4. Projectiles, enemies, hit feedback, and invulnerability feedback are placeholder visuals generated from Babylon primitives or code effects for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
+No final assets are included through Phase 5. Projectiles, enemies, hit feedback, invulnerability feedback, and progression overlays are placeholder visuals generated from Babylon primitives, code effects, or DOM/CSS for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.

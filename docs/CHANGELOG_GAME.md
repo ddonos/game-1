@@ -1,5 +1,50 @@
 # Game Changelog
 
+## Phase 5
+
+### What Changed
+
+- Added a stage timer system with a configurable 35-second normal-stage placeholder duration.
+- Added remaining stage time to the HUD.
+- Timer counts down only during active gameplay.
+- Added stage clear state when the timer reaches 0.
+- Stage clear stops gameplay, enemy spawning, and player shooting, then clears active enemies/projectiles/hit bursts.
+- Added a simple DOM Stage Clear overlay with cleared stage, score, currency, lives, Continue button, and Enter instruction.
+- Added continue-to-next-stage flow that increments stage, resets timer/player position, and preserves lives, score, and currency.
+- Added temporary Run Complete handling for clearing the final planned stage.
+
+### Files Changed
+
+- `src/config/gameConfig.ts`
+- `src/game/GameApp.ts`
+- `src/main.ts`
+- `src/systems/InputController.ts`
+- `src/systems/StageSystem.ts`
+- `src/ui/hud.ts`
+- `src/ui/stageClearOverlay.ts`
+- `src/ui/styles.css`
+- `src/utils/types.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/STAGE_DESIGN.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Boss stages and boss fights are still not implemented.
+- Per-stage difficulty, stage-specific spawn plans, missions, shop, power-ups, audio, and final assets are not implemented in Phase 5.
+- Run Complete is a temporary overlay state, not a final ending sequence.
+
+### Next Recommended Step
+
+- Add data-driven stage configuration for duration, spawn pacing, and difficulty scaling.
+
 ## Phase 4
 
 ### What Changed

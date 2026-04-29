@@ -26,10 +26,7 @@ export const GAME_CONFIG = {
   },
   stagePlan: {
     totalStages: 30,
-    normalStageDurationSeconds: {
-      min: 30,
-      max: 40
-    },
+    normalStageDurationSeconds: 35,
     bossStageInterval: 5
   },
   starfield: {

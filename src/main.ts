@@ -1,6 +1,7 @@
 import { GameApp } from "./game/GameApp";
 import { createGameOverOverlay } from "./ui/gameOverOverlay";
 import { createHud } from "./ui/hud";
+import { createStageClearOverlay } from "./ui/stageClearOverlay";
 import "./ui/styles.css";
 
 const root = document.querySelector<HTMLDivElement>("#app");
@@ -18,7 +19,10 @@ let game: GameApp;
 const gameOverOverlay = createGameOverOverlay(root, () => {
   game.restartRun();
 });
-game = new GameApp(canvas, hud, gameOverOverlay);
+const stageClearOverlay = createStageClearOverlay(root, () => {
+  game.continueFromStageClear();
+});
+game = new GameApp(canvas, hud, gameOverOverlay, stageClearOverlay);
 
 game.start();
 

@@ -3,4 +3,5 @@ export type GameState = {
   score: number;
   currency: number;
   stage: number;
+  stageTimeRemaining: number;
 };

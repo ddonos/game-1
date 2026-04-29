@@ -8,9 +8,11 @@ import { EnemyPool } from "../systems/EnemyPool";
 import { HitFeedbackPool } from "../systems/HitFeedbackPool";
 import { InputController } from "../systems/InputController";
 import { ProjectilePool } from "../systems/ProjectilePool";
+import { StageSystem } from "../systems/StageSystem";
 import { Starfield } from "../systems/Starfield";
 import type { GameOverOverlayController } from "../ui/gameOverOverlay";
 import type { HudController } from "../ui/hud";
+import type { StageClearOverlayController } from "../ui/stageClearOverlay";
 import type { GameState } from "../utils/types";
 import { createScene } from "./createScene";
 
@@ -22,7 +24,8 @@ export class GameApp {
     lives: GAME_CONFIG.initialLives,
     score: GAME_CONFIG.initialScore,
     currency: GAME_CONFIG.initialCurrency,
-    stage: GAME_CONFIG.initialStage
+    stage: GAME_CONFIG.initialStage,
+    stageTimeRemaining: GAME_CONFIG.stagePlan.normalStageDurationSeconds
   };
   private readonly resizeObserver: ResizeObserver;
   private combat?: CombatSystem;
@@ -30,13 +33,17 @@ export class GameApp {
   private enemies?: EnemyPool;
   private hitFeedback?: HitFeedbackPool;
   private isGameOver = false;
+  private isRunComplete = false;
+  private isStageClear = false;
   private projectiles?: ProjectilePool;
+  private stageSystem = new StageSystem();
   private starfield?: Starfield;
 
   constructor(
     canvas: HTMLCanvasElement,
     private readonly hud: HudController,
-    private readonly gameOverOverlay: GameOverOverlayController
+    private readonly gameOverOverlay: GameOverOverlayController,
+    private readonly stageClearOverlay: StageClearOverlayController
   ) {
     this.engine = new Engine(canvas, true, {
       antialias: true,
@@ -67,10 +74,21 @@ export class GameApp {
     this.engine.runRenderLoop(() => {
       const deltaSeconds = this.engine.getDeltaTime() / 1000;
       const shouldRestart = this.input.consumeRestart();
+      const shouldContinue = this.input.consumeContinue();
 
       if (this.isGameOver) {
         if (shouldRestart) {
           this.restartRun();
+        }
+
+        this.starfield?.update(deltaSeconds);
+        scene.render();
+        return;
+      }
+
+      if (this.isStageClear) {
+        if (shouldContinue) {
+          this.continueFromStageClear();
         }
 
         this.starfield?.update(deltaSeconds);
@@ -90,6 +108,7 @@ export class GameApp {
       }
       this.applyCombatResults();
       this.hitFeedback?.update(deltaSeconds);
+      this.updateStageTimer(deltaSeconds);
       this.starfield?.update(deltaSeconds);
 
       scene.render();
@@ -112,7 +131,11 @@ export class GameApp {
     this.gameState.score = GAME_CONFIG.initialScore;
     this.gameState.currency = GAME_CONFIG.initialCurrency;
     this.gameState.stage = GAME_CONFIG.initialStage;
+    this.stageSystem.resetTimer();
+    this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
     this.isGameOver = false;
+    this.isRunComplete = false;
+    this.isStageClear = false;
 
     this.combat?.reset();
     this.enemies?.deactivateAll();
@@ -121,6 +144,31 @@ export class GameApp {
     this.player?.reset();
     this.hud.update(this.gameState);
     this.gameOverOverlay.hide();
+    this.stageClearOverlay.hide();
+  }
+
+  continueFromStageClear(): void {
+    if (!this.isStageClear) {
+      return;
+    }
+
+    if (this.isRunComplete) {
+      this.restartRun();
+      return;
+    }
+
+    this.gameState.stage += 1;
+    this.stageSystem.resetTimer();
+    this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
+    this.isStageClear = false;
+
+    this.combat?.reset();
+    this.enemies?.deactivateAll();
+    this.projectiles?.deactivateAll();
+    this.hitFeedback?.deactivateAll();
+    this.player?.reset();
+    this.stageClearOverlay.hide();
+    this.hud.update(this.gameState);
   }
 
   private applyCombatResults(): void {
@@ -150,11 +198,38 @@ export class GameApp {
     }
   }
 
+  private updateStageTimer(deltaSeconds: number): void {
+    if (this.isGameOver) {
+      return;
+    }
+
+    const isStageComplete = this.stageSystem.update(deltaSeconds);
+    this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
+    this.hud.update(this.gameState);
+
+    if (isStageComplete && this.gameState.lives > 0) {
+      this.enterStageClear();
+    }
+  }
+
   private enterGameOver(): void {
     this.isGameOver = true;
     this.enemies?.deactivateAll();
     this.projectiles?.deactivateAll();
     this.hitFeedback?.deactivateAll();
     this.gameOverOverlay.show(this.gameState);
+  }
+
+  private enterStageClear(): void {
+    this.isStageClear = true;
+    this.isRunComplete = this.stageSystem.isFinalStage(this.gameState.stage);
+    this.enemies?.deactivateAll();
+    this.projectiles?.deactivateAll();
+    this.hitFeedback?.deactivateAll();
+    this.stageClearOverlay.show({
+      clearedStage: this.gameState.stage,
+      isRunComplete: this.isRunComplete,
+      state: this.gameState
+    });
   }
 }

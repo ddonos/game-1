@@ -9,7 +9,8 @@ const ACTION_KEYS = {
   up: new Set(["ArrowUp", "KeyW"]),
   down: new Set(["ArrowDown", "KeyS"]),
   fire: new Set(["Space"]),
-  restart: new Set(["KeyR"])
+  restart: new Set(["KeyR"]),
+  continue: new Set(["Enter", "NumpadEnter"])
 };
 
 export class InputController {
@@ -17,6 +18,7 @@ export class InputController {
   private readonly abortController = new AbortController();
   private queuedPointerFire = false;
   private queuedRestart = false;
+  private queuedContinue = false;
 
   constructor(target: Window = window) {
     target.addEventListener("keydown", this.handleKeyDown, {
@@ -61,6 +63,12 @@ export class InputController {
     return shouldRestart;
   }
 
+  consumeContinue(): boolean {
+    const shouldContinue = this.queuedContinue;
+    this.queuedContinue = false;
+    return shouldContinue;
+  }
+
   dispose(): void {
     this.abortController.abort();
     this.pressedKeys.clear();
@@ -84,6 +92,10 @@ export class InputController {
       if (this.hasAction("restart")) {
         this.queuedRestart = true;
       }
+
+      if (this.hasAction("continue")) {
+        this.queuedContinue = true;
+      }
     }
   };
 
@@ -98,6 +110,7 @@ export class InputController {
     this.pressedKeys.clear();
     this.queuedPointerFire = false;
     this.queuedRestart = false;
+    this.queuedContinue = false;
   };
 
   private readonly handlePointerDown = (event: PointerEvent): void => {

@@ -2,7 +2,7 @@
 
 ## Structure
 
-The full game is planned as a 30-stage run with a maximum of 3 lives. Normal stages last around 30-40 seconds. Every 5th stage is a boss stage.
+The full game is planned as a 30-stage run with a maximum of 3 lives. The current implementation supports basic stage progression with a 35-second normal-stage timer placeholder. Every 5th stage remains planned as a boss stage, but boss fights are not implemented yet.
 
 ## Stage Map
 
@@ -41,4 +41,4 @@ The full game is planned as a 30-stage run with a maximum of 3 lives. Normal sta
 
 ## Future Data-Driven Plan
 
-Later phases should move stage metadata into data files. Those files should define duration, boss status, spawn plans, hazard plans, reward tuning, and presentation notes without hard-coding future gameplay systems into Phase 0.
+Later phases should move stage metadata into data files. Those files should define duration, boss status, spawn plans, hazard plans, reward tuning, difficulty changes, and presentation notes. Actual per-stage difficulty configuration is still future work.
