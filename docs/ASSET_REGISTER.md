@@ -14,3 +14,5 @@ Phase 1 player projectiles, Phase 2 enemies, Phase 3 hit feedback, Phase 4 invul
 Future entries must include licence details, attribution requirements, purchase records when applicable, modification notes, and whether the asset is cleared for commercial distribution.
 
 Phase 9A added no external assets.
+
+Phase 9B added no external assets.

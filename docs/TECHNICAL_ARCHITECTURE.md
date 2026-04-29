@@ -28,6 +28,8 @@ The game must run smoothly inside an iframe/html5 environment. The current scene
 
 Projectile pooling is implemented for player bullets/projectiles. A limited pool is pre-created, inactive projectiles are hidden and skipped, and firing reuses available instances instead of creating and disposing meshes during gameplay. Later phases must extend object pooling to other frequently spawned objects and should avoid per-frame allocations in hot paths.
 
+Player fire timing is configured in `GAME_CONFIG.projectiles`. The base cooldown is moderate, held fire repeats at that cooldown, and cooldown values are clamped to a normal minimum plus a lower absolute rapid-fire minimum. `EffectSystem` applies the rapid fire power-up by multiplying the base cooldown and respecting the rapid-fire clamp, leaving room for future shop fire-rate upgrades.
+
 Enemy pooling is implemented for placeholder enemies. A limited pool is pre-created, inactive enemies are disabled and skipped, and the spawn system reuses available enemies at a readable interval. Enemies spawn from deep space with varied X/Y positions, move toward the player along the Z axis, and deactivate after passing the player.
 
 Combat uses simple bounding-sphere distance checks. Active player projectiles are checked against active enemies for rewards, and active enemies are checked against the player for direct damage. It does not use Babylon mesh collision or a physics engine.

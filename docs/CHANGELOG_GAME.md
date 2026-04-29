@@ -1,5 +1,36 @@
 # Game Changelog
 
+## Phase 9B
+
+### What Changed
+
+- Tuned the base player fire cooldown to a clearer 300ms baseline.
+- Added configured cooldown floors for normal firing and rapid-fire firing.
+- Kept held Spacebar repeat fire and pointer/touch fire using the same pooled projectile path.
+- Preserved rapid fire as a temporary cooldown reduction while preventing extreme fire rates.
+
+### Files Changed
+
+- `src/config/gameConfig.ts`
+- `src/systems/EffectSystem.ts`
+- `src/systems/ProjectilePool.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Fire-rate values are still placeholder tuning and may need playtest adjustment before shop upgrades.
+
+### Next Recommended Step
+
+- Implement Phase 10 shop upgrades using the configured fire-rate floors as guardrails.
+
 ## Phase 9A
 
 ### What Changed

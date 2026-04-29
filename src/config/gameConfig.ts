@@ -38,7 +38,9 @@ export const GAME_CONFIG = {
     poolSize: 24,
     speed: 44,
     maxTravelDistance: 70,
-    fireCooldownSeconds: 0.16,
+    fireCooldownSeconds: 0.3,
+    minFireCooldownSeconds: 0.13,
+    rapidFireMinCooldownSeconds: 0.08,
     collisionRadius: 0.32,
     damage: 1
   },

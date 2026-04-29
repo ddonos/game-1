@@ -23,11 +23,16 @@ export class ProjectilePool {
     origin: Vector3,
     fireCooldownSeconds: number = GAME_CONFIG.projectiles.fireCooldownSeconds
   ): void {
+    const cooldownSeconds = Math.max(
+      GAME_CONFIG.projectiles.rapidFireMinCooldownSeconds,
+      fireCooldownSeconds
+    );
+
     this.cooldownRemaining = Math.max(0, this.cooldownRemaining - deltaSeconds);
 
     if (shouldFire && this.cooldownRemaining === 0) {
       this.fire(origin);
-      this.cooldownRemaining = fireCooldownSeconds;
+      this.cooldownRemaining = cooldownSeconds;
     }
 
     for (const projectile of this.projectiles) {

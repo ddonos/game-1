@@ -21,7 +21,7 @@ Phase 0 includes only the playable shell: a black space background, lightweight 
 
 The current player verbs are movement and shooting. The player ship moves left, right, up, and down across the visible play area using WASD or arrow keys.
 
-Shooting uses Spacebar as the primary fire input. Holding Spacebar fires repeatedly at a controlled cooldown. Pointer press on the screen also triggers a simple single-shot fire input for mouse or touch-friendly html5 embeds. Projectiles are placeholder glowing primitives that travel forward into the scene along the intended enemy approach lane.
+Shooting uses Spacebar as the primary fire input. Holding Spacebar fires repeatedly at a configurable cooldown. Pointer press on the screen also triggers a simple single-shot fire input for mouse or touch-friendly html5 embeds. The base fire rate is intentionally moderate so rapid fire and future shop fire-rate upgrades have room to feel valuable. Projectiles are placeholder glowing primitives that travel forward into the scene along the intended enemy approach lane.
 
 ## Current Enemy Behavior
 
@@ -60,7 +60,7 @@ Generated placeholder power-ups now spawn from deep space, move toward the playe
 - Shield blocks player damage from enemy contact and enemy projectiles for its active duration.
 - Score multiplier temporarily increases score gained from destroyed enemies.
 
-Temporary effects expire automatically. Shop and permanent upgrades are still future work.
+Temporary effects expire automatically. Shop and permanent upgrades are still future work; future fire-rate upgrades should reduce the cooldown further while respecting the configured minimums.
 
 ## Menus
 

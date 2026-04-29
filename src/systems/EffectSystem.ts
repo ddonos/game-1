@@ -50,13 +50,18 @@ export class EffectSystem {
   }
 
   getFireCooldownSeconds(): number {
+    const baseCooldown = Math.max(
+      GAME_CONFIG.projectiles.minFireCooldownSeconds,
+      GAME_CONFIG.projectiles.fireCooldownSeconds
+    );
+
     if (this.rapidFireRemaining <= 0) {
-      return GAME_CONFIG.projectiles.fireCooldownSeconds;
+      return baseCooldown;
     }
 
-    return (
-      GAME_CONFIG.projectiles.fireCooldownSeconds *
-      POWER_UP_CONFIG.types.rapidFire.effectStrength
+    return Math.max(
+      GAME_CONFIG.projectiles.rapidFireMinCooldownSeconds,
+      baseCooldown * POWER_UP_CONFIG.types.rapidFire.effectStrength
     );
   }
 
