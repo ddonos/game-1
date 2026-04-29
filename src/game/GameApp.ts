@@ -2,6 +2,7 @@ import { Engine } from "@babylonjs/core/Engines/engine";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 
 import { GAME_CONFIG } from "../config/gameConfig";
+import { getStageConfig } from "../config/stageConfigs";
 import { PlayerShip } from "../entities/PlayerShip";
 import { CombatSystem } from "../systems/CombatSystem";
 import { EnemyPool } from "../systems/EnemyPool";
@@ -35,7 +36,7 @@ export class GameApp {
     score: GAME_CONFIG.initialScore,
     currency: GAME_CONFIG.initialCurrency,
     stage: GAME_CONFIG.initialStage,
-    stageTimeRemaining: GAME_CONFIG.stagePlan.normalStageDurationSeconds
+    stageTimeRemaining: getStageConfig(GAME_CONFIG.initialStage).durationSeconds
   };
   private readonly resizeObserver: ResizeObserver;
   private combat?: CombatSystem;
@@ -204,7 +205,8 @@ export class GameApp {
     this.gameState.score = GAME_CONFIG.initialScore;
     this.gameState.currency = GAME_CONFIG.initialCurrency;
     this.gameState.stage = GAME_CONFIG.initialStage;
-    this.stageSystem.resetTimer();
+    this.stageSystem.setStage(this.gameState.stage);
+    this.enemies?.setStageConfig(this.stageSystem.config);
     this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
 
     this.combat?.reset();
@@ -226,7 +228,8 @@ export class GameApp {
     }
 
     this.gameState.stage += 1;
-    this.stageSystem.resetTimer();
+    this.stageSystem.setStage(this.gameState.stage);
+    this.enemies?.setStageConfig(this.stageSystem.config);
     this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
     this.runState = "playing";
 

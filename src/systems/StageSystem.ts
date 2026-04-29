@@ -1,7 +1,13 @@
 import { GAME_CONFIG } from "../config/gameConfig";
+import { getStageConfig, type StageConfig } from "../config/stageConfigs";
 
 export class StageSystem {
-  private timeRemaining: number = GAME_CONFIG.stagePlan.normalStageDurationSeconds;
+  private currentStageConfig: StageConfig = getStageConfig(GAME_CONFIG.initialStage);
+  private timeRemaining: number = this.currentStageConfig.durationSeconds;
+
+  get config(): StageConfig {
+    return this.currentStageConfig;
+  }
 
   get remainingSeconds(): number {
     return this.timeRemaining;
@@ -12,8 +18,13 @@ export class StageSystem {
     return this.timeRemaining === 0;
   }
 
+  setStage(stageNumber: number): void {
+    this.currentStageConfig = getStageConfig(stageNumber);
+    this.resetTimer();
+  }
+
   resetTimer(): void {
-    this.timeRemaining = GAME_CONFIG.stagePlan.normalStageDurationSeconds;
+    this.timeRemaining = this.currentStageConfig.durationSeconds;
   }
 
   isFinalStage(stage: number): boolean {

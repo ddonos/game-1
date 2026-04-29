@@ -1,4 +1,3 @@
-import { Color3 } from "@babylonjs/core/Maths/math.color";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
@@ -7,15 +6,32 @@ import { Scene } from "@babylonjs/core/scene";
 import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
 
 import { GAME_CONFIG } from "../config/gameConfig";
+import {
+  ENEMY_TYPES,
+  type EnemyTypeConfig,
+  type EnemyTypeId
+} from "../config/enemyTypes";
+import type { StageConfig } from "../config/stageConfigs";
 
 export class Enemy {
   private readonly root: TransformNode;
+  private readonly body: Mesh;
+  private readonly fins: Mesh[] = [];
   private active = false;
+  private collisionRadiusValue = ENEMY_TYPES.basic.collisionRadius;
+  private currentHealth = ENEMY_TYPES.basic.health;
+  private currencyRewardValue = ENEMY_TYPES.basic.currencyReward;
+  private scoreRewardValue = ENEMY_TYPES.basic.scoreReward;
+  private speed: number = GAME_CONFIG.enemies.baseSpeed;
 
-  constructor(scene: Scene, material: StandardMaterial, index: number) {
+  constructor(
+    scene: Scene,
+    private readonly materials: Record<EnemyTypeId, StandardMaterial>,
+    index: number
+  ) {
     this.root = new TransformNode(`enemy-${index}`, scene);
 
-    const body = MeshBuilder.CreateCylinder(
+    this.body = MeshBuilder.CreateCylinder(
       `enemy-${index}-body`,
       {
         diameterTop: 0.2,
@@ -25,25 +41,26 @@ export class Enemy {
       },
       scene
     );
-    body.material = material;
-    body.rotation.x = -Math.PI / 2;
-    body.parent = this.root;
+    this.body.material = materials.basic;
+    this.body.rotation.x = -Math.PI / 2;
+    this.body.parent = this.root;
 
-    const fin = this.createFin(`enemy-${index}-top-fin`, scene, material);
+    const fin = this.createFin(`enemy-${index}-top-fin`, scene);
     fin.position.y = 0.34;
 
-    const bottomFin = this.createFin(`enemy-${index}-bottom-fin`, scene, material);
+    const bottomFin = this.createFin(`enemy-${index}-bottom-fin`, scene);
     bottomFin.position.y = -0.34;
     bottomFin.rotation.z = Math.PI;
 
     this.root.setEnabled(false);
   }
 
-  static createMaterial(scene: Scene): StandardMaterial {
-    const material = new StandardMaterial("enemy-placeholder-material", scene);
-    material.diffuseColor = new Color3(1, 0.28, 0.18);
-    material.emissiveColor = new Color3(0.22, 0.04, 0.02);
-    return material;
+  static createMaterials(scene: Scene): Record<EnemyTypeId, StandardMaterial> {
+    return {
+      basic: createMaterial(scene, ENEMY_TYPES.basic),
+      fast: createMaterial(scene, ENEMY_TYPES.fast),
+      tank: createMaterial(scene, ENEMY_TYPES.tank)
+    };
   }
 
   get isActive(): boolean {
@@ -55,14 +72,39 @@ export class Enemy {
   }
 
   get collisionRadius(): number {
-    return GAME_CONFIG.enemies.collisionRadius;
+    return this.collisionRadiusValue;
   }
 
-  spawn(position: Vector3): void {
+  get currencyReward(): number {
+    return this.currencyRewardValue;
+  }
+
+  get scoreReward(): number {
+    return this.scoreRewardValue;
+  }
+
+  spawn(position: Vector3, type: EnemyTypeConfig, stageConfig: StageConfig): void {
     this.active = true;
+    this.currentHealth = type.health;
+    this.collisionRadiusValue = type.collisionRadius;
+    this.speed =
+      GAME_CONFIG.enemies.baseSpeed *
+      type.speedMultiplier *
+      stageConfig.enemySpeedMultiplier;
+    this.scoreRewardValue = Math.round(type.scoreReward * stageConfig.scoreMultiplier);
+    this.currencyRewardValue = Math.round(
+      type.currencyReward * stageConfig.currencyMultiplier
+    );
     this.root.position.copyFrom(position);
     this.root.rotation.y = 0;
+    this.root.scaling.set(type.visualScale.x, type.visualScale.y, type.visualScale.z);
+    this.setMaterial(this.materials[type.id]);
     this.root.setEnabled(true);
+  }
+
+  takeHit(damage: number): boolean {
+    this.currentHealth -= damage;
+    return this.currentHealth <= 0;
   }
 
   update(deltaSeconds: number): void {
@@ -70,7 +112,7 @@ export class Enemy {
       return;
     }
 
-    this.root.position.z -= GAME_CONFIG.enemies.speed * deltaSeconds;
+    this.root.position.z -= this.speed * deltaSeconds;
     this.root.rotation.z += deltaSeconds * 1.8;
 
     if (this.root.position.z <= GAME_CONFIG.enemies.deactivateZ) {
@@ -87,7 +129,7 @@ export class Enemy {
     this.root.dispose(false, true);
   }
 
-  private createFin(name: string, scene: Scene, material: StandardMaterial): Mesh {
+  private createFin(name: string, scene: Scene): Mesh {
     const fin = MeshBuilder.CreateBox(
       name,
       {
@@ -97,9 +139,25 @@ export class Enemy {
       },
       scene
     );
-    fin.material = material;
+    fin.material = this.materials.basic;
     fin.position.z = 0.06;
     fin.parent = this.root;
+    this.fins.push(fin);
     return fin;
   }
+
+  private setMaterial(material: StandardMaterial): void {
+    this.body.material = material;
+
+    for (const fin of this.fins) {
+      fin.material = material;
+    }
+  }
+}
+
+function createMaterial(scene: Scene, type: EnemyTypeConfig): StandardMaterial {
+  const material = new StandardMaterial(`enemy-${type.id}-material`, scene);
+  material.diffuseColor = type.color;
+  material.emissiveColor = type.emissiveColor;
+  return material;
 }

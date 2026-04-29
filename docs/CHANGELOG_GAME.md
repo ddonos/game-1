@@ -1,5 +1,50 @@
 # Game Changelog
 
+## Phase 7
+
+### What Changed
+
+- Added typed data-driven configuration for all 30 planned stages.
+- Stage configs now include duration, spawn interval, enemy speed multiplier, enemy type weights, reward multipliers, and boss-stage flags.
+- Marked stages 5, 10, 15, 20, 25, and 30 as planned boss stages in config only.
+- Added basic, fast, and tank enemy archetype config.
+- Enemy spawning now uses current stage weighted enemy type rules.
+- Enemy spawn intervals and speed scaling now come from the active stage config.
+- Added enemy health; tanks require multiple projectile hits before destruction.
+- Rewards now come from enemy type config and are scaled by the active stage config.
+- Added generated placeholder visual differences for enemy variants using color and scale.
+
+### Files Changed
+
+- `src/config/enemyTypes.ts`
+- `src/config/gameConfig.ts`
+- `src/config/stageConfigs.ts`
+- `src/entities/Enemy.ts`
+- `src/game/GameApp.ts`
+- `src/systems/CombatSystem.ts`
+- `src/systems/EnemyPool.ts`
+- `src/systems/StageSystem.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/STAGE_DESIGN.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Boss stages are marked in config but boss fights are not implemented.
+- Enemy shooting, shop, mission logic, power-ups, audio, saving/loading, leaderboard, and final assets are not implemented in Phase 7.
+- Stage configs are TypeScript data for now rather than external JSON or tooling-driven content.
+
+### Next Recommended Step
+
+- Add boss-stage placeholder flow or richer scripted spawn patterns from stage config.
+
 ## Phase 6
 
 ### What Changed

@@ -2,22 +2,30 @@ import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { Scene } from "@babylonjs/core/scene";
 
 import { GAME_CONFIG } from "../config/gameConfig";
+import { ENEMY_TYPE_ORDER, ENEMY_TYPES, type EnemyTypeId } from "../config/enemyTypes";
+import { getStageConfig, type StageConfig } from "../config/stageConfigs";
 import { Enemy } from "../entities/Enemy";
 import { randomRange } from "../utils/math";
 
 export class EnemyPool {
   private readonly enemies: Enemy[] = [];
   private readonly spawnPosition = new Vector3();
+  private stageConfig: StageConfig = getStageConfig(GAME_CONFIG.initialStage);
   private nextIndex = 0;
   private spawnTimer = 0;
 
   constructor(scene: Scene) {
-    const material = Enemy.createMaterial(scene);
+    const materials = Enemy.createMaterials(scene);
 
     for (let index = 0; index < GAME_CONFIG.enemies.poolSize; index += 1) {
-      this.enemies.push(new Enemy(scene, material, index));
+      this.enemies.push(new Enemy(scene, materials, index));
     }
 
+    this.resetSpawnTimer();
+  }
+
+  setStageConfig(stageConfig: StageConfig): void {
+    this.stageConfig = stageConfig;
     this.resetSpawnTimer();
   }
 
@@ -67,7 +75,11 @@ export class EnemyPool {
       ),
       GAME_CONFIG.enemies.spawnZ
     );
-    enemy.spawn(this.spawnPosition);
+    enemy.spawn(
+      this.spawnPosition,
+      ENEMY_TYPES[this.pickEnemyType()],
+      this.stageConfig
+    );
   }
 
   private findAvailableEnemy(): Enemy | undefined {
@@ -86,8 +98,29 @@ export class EnemyPool {
 
   private resetSpawnTimer(): void {
     this.spawnTimer = randomRange(
-      GAME_CONFIG.enemies.spawnIntervalSeconds.min,
-      GAME_CONFIG.enemies.spawnIntervalSeconds.max
+      this.stageConfig.spawnIntervalSeconds.min,
+      this.stageConfig.spawnIntervalSeconds.max
     );
+  }
+
+  private pickEnemyType(): EnemyTypeId {
+    const weights = this.stageConfig.enemyTypeWeights;
+    let totalWeight = 0;
+
+    for (const type of ENEMY_TYPE_ORDER) {
+      totalWeight += weights[type];
+    }
+
+    let roll = Math.random() * totalWeight;
+
+    for (const type of ENEMY_TYPE_ORDER) {
+      roll -= weights[type];
+
+      if (roll <= 0) {
+        return type;
+      }
+    }
+
+    return "basic";
   }
 }

@@ -26,7 +26,6 @@ export const GAME_CONFIG = {
   },
   stagePlan: {
     totalStages: 30,
-    normalStageDurationSeconds: 35,
     bossStageInterval: 5
   },
   starfield: {
@@ -40,20 +39,14 @@ export const GAME_CONFIG = {
     speed: 44,
     maxTravelDistance: 70,
     fireCooldownSeconds: 0.16,
-    collisionRadius: 0.32
+    collisionRadius: 0.32,
+    damage: 1
   },
   enemies: {
     poolSize: 10,
-    speed: 8,
-    collisionRadius: 0.72,
-    scoreReward: 100,
-    currencyReward: 3,
+    baseSpeed: 8,
     spawnZ: 54,
     deactivateZ: -9,
-    spawnIntervalSeconds: {
-      min: 1.2,
-      max: 1.8
-    },
     spawnBounds: {
       x: 4.2,
       yMin: -2.1,

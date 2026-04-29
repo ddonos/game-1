@@ -64,9 +64,13 @@ export class CombatSystem {
         if (distanceSquared <= radius * radius) {
           this.hitFeedback.spawn(enemy.position);
           projectile.deactivate();
-          enemy.deactivate();
-          this.pendingScore += GAME_CONFIG.enemies.scoreReward;
-          this.pendingCurrency += GAME_CONFIG.enemies.currencyReward;
+
+          if (enemy.takeHit(GAME_CONFIG.projectiles.damage)) {
+            enemy.deactivate();
+            this.pendingScore += enemy.scoreReward;
+            this.pendingCurrency += enemy.currencyReward;
+          }
+
           break;
         }
       }
