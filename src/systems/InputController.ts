@@ -7,12 +7,14 @@ const ACTION_KEYS = {
   left: new Set(["ArrowLeft", "KeyA"]),
   right: new Set(["ArrowRight", "KeyD"]),
   up: new Set(["ArrowUp", "KeyW"]),
-  down: new Set(["ArrowDown", "KeyS"])
+  down: new Set(["ArrowDown", "KeyS"]),
+  fire: new Set(["Space"])
 };
 
 export class InputController {
   private readonly pressedKeys = new Set<string>();
   private readonly abortController = new AbortController();
+  private queuedPointerFire = false;
 
   constructor(target: Window = window) {
     target.addEventListener("keydown", this.handleKeyDown, {
@@ -22,6 +24,9 @@ export class InputController {
       signal: this.abortController.signal
     });
     target.addEventListener("blur", this.handleBlur, {
+      signal: this.abortController.signal
+    });
+    target.addEventListener("pointerdown", this.handlePointerDown, {
       signal: this.abortController.signal
     });
   }
@@ -36,6 +41,16 @@ export class InputController {
     }
 
     return { x, y };
+  }
+
+  isFirePressed(): boolean {
+    return this.hasAction("fire");
+  }
+
+  consumePointerFire(): boolean {
+    const shouldFire = this.queuedPointerFire;
+    this.queuedPointerFire = false;
+    return shouldFire;
   }
 
   dispose(): void {
@@ -69,6 +84,13 @@ export class InputController {
 
   private readonly handleBlur = (): void => {
     this.pressedKeys.clear();
+    this.queuedPointerFire = false;
+  };
+
+  private readonly handlePointerDown = (event: PointerEvent): void => {
+    if (event.button === 0) {
+      this.queuedPointerFire = true;
+    }
   };
 }
 

@@ -76,6 +76,14 @@ export class PlayerShip {
     return this.root.position;
   }
 
+  writeMuzzlePositionToRef(target: Vector3): void {
+    target.set(
+      this.root.position.x + GAME_CONFIG.player.muzzleOffset.x,
+      this.root.position.y + GAME_CONFIG.player.muzzleOffset.y,
+      this.root.position.z + GAME_CONFIG.player.muzzleOffset.z
+    );
+  }
+
   dispose(): void {
     this.root.dispose(false, true);
   }

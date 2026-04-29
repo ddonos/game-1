@@ -1,5 +1,43 @@
 # Game Changelog
 
+## Phase 1
+
+### What Changed
+
+- Added Spacebar player firing with a controlled cooldown for held fire.
+- Added simple pointer press firing for mouse or touch-friendly embeds.
+- Added glowing placeholder player projectiles that travel forward into the scene.
+- Added projectile pooling so shots reuse pre-created meshes instead of creating and disposing objects during gameplay.
+- Added projectile deactivation after maximum travel distance.
+
+### Files Changed
+
+- `src/config/gameConfig.ts`
+- `src/entities/PlayerShip.ts`
+- `src/entities/Projectile.ts`
+- `src/game/GameApp.ts`
+- `src/systems/InputController.ts`
+- `src/systems/ProjectilePool.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Projectiles do not collide with anything yet.
+- No enemies, scoring, audio, power-ups, missions, shop, or bosses are implemented in Phase 1.
+- Projectile visuals are generated placeholders, not final assets.
+
+### Next Recommended Step
+
+- Add a minimal enemy placeholder and collision pass using pooled enemy objects.
+
 ## Phase 0
 
 - Created initial Vite, TypeScript, and Babylon.js project foundation.
