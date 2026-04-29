@@ -43,6 +43,10 @@ body {
   pointer-events: none;
 }
 
+.hud[hidden] {
+  display: none;
+}
+
 .hud__item {
   display: grid;
   grid-template-columns: auto auto;
@@ -73,7 +77,9 @@ body {
 }
 
 .game-over,
-.stage-clear {
+.stage-clear,
+.main-menu,
+.pause-menu {
   position: absolute;
   inset: 0;
   z-index: 4;
@@ -87,18 +93,71 @@ body {
 }
 
 .game-over[hidden],
-.stage-clear[hidden] {
+.stage-clear[hidden],
+.main-menu[hidden],
+.pause-menu[hidden],
+.main-menu__panel[hidden] {
   display: none;
 }
 
 .game-over__title,
-.stage-clear__title {
+.stage-clear__title,
+.main-menu__title,
+.pause-menu__title {
   margin: 0;
   color: #ffffff;
   font-size: 42px;
   line-height: 1;
   letter-spacing: 0;
   text-shadow: 0 0 18px rgba(62, 210, 255, 0.55);
+}
+
+.main-menu__title {
+  max-width: 760px;
+}
+
+.main-menu__nav,
+.pause-menu {
+  justify-items: center;
+}
+
+.main-menu__nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 10px;
+  width: min(520px, 100%);
+}
+
+.main-menu__panel {
+  width: min(560px, 100%);
+  padding: 14px;
+  border: 1px solid rgba(132, 208, 255, 0.35);
+  border-radius: 6px;
+  background: rgba(0, 10, 18, 0.82);
+  text-align: left;
+}
+
+.main-menu__panel-title {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+.main-menu__list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+  color: #cce6f3;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.main-menu__footer {
+  margin: 0;
+  color: #8eb1c2;
+  font-size: 12px;
 }
 
 .game-over__stats,
@@ -134,7 +193,8 @@ body {
 }
 
 .game-over__button,
-.stage-clear__button {
+.stage-clear__button,
+.menu-button {
   justify-self: center;
   min-width: 124px;
   min-height: 38px;
@@ -148,7 +208,8 @@ body {
 }
 
 .game-over__button:focus-visible,
-.stage-clear__button:focus-visible {
+.stage-clear__button:focus-visible,
+.menu-button:focus-visible {
   outline: 2px solid #ffffff;
   outline-offset: 3px;
 }
@@ -166,8 +227,15 @@ body {
   }
 
   .game-over__title,
-  .stage-clear__title {
+  .stage-clear__title,
+  .main-menu__title,
+  .pause-menu__title {
     font-size: 34px;
+  }
+
+  .main-menu__nav {
+    grid-template-columns: minmax(0, 180px);
+    justify-content: center;
   }
 
   .game-over__stats,

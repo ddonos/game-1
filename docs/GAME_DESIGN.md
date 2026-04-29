@@ -39,6 +39,12 @@ The HUD shows the remaining stage time. During active gameplay, the timer counts
 
 Game over still has priority: if lives reach 0 before the timer ends, the game over flow appears instead of stage clear.
 
+## Menus
+
+The game now starts from a Main Menu instead of immediately starting gameplay. The Main Menu includes Play, How to Play, and a Missions placeholder panel. The How to Play panel lists movement, firing, survival, enemy destruction, enemy avoidance, and stage-clear goals. The Missions panel is placeholder only and does not implement mission logic yet.
+
+Pause Menu is available only during active gameplay with Escape. While Main Menu or Pause Menu is active, gameplay systems do not run: the player cannot shoot, enemies do not spawn or move, projectiles do not advance, and the stage timer does not count down.
+
 ## Later Systems
 
 Object pooling is now introduced for player projectiles and placeholder enemies. Pooling is still required later for hazards, effects, pickups, and any repeated temporary objects. This is important for smooth iframe/html5 performance and to avoid garbage collection spikes.

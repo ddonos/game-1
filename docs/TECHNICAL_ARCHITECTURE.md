@@ -38,11 +38,14 @@ Player invulnerability is tracked on the player entity after damage. While invul
 
 Stage timing is handled by `StageSystem`. It owns the current stage countdown and exposes a simple completion signal. `GameApp` wires that into run progression state: active gameplay updates the timer, stage clear pauses gameplay, clears active pools, shows a DOM Stage Clear overlay, and waits for Enter or the Continue button. Continuing increments the stage, resets the timer to 35 seconds, resets the player position, preserves lives/score/currency, hides the overlay, and resumes gameplay. If the cleared stage is the configured final planned stage, the same overlay shows a temporary Run Complete message.
 
+Menu overlays are DOM/CSS modules under `src/ui`: Main Menu, Pause Menu, Game Over, and Stage Clear. `GameApp` owns a small run state union: `mainMenu`, `playing`, `paused`, `stageClear`, `gameOver`, and `runComplete`. Gameplay updates are state-gated so spawning, shooting, movement, combat, hit bursts, and stage timing run only in `playing`. Escape toggles pause only from active gameplay; it does not pause from Main Menu, Game Over, Stage Clear, or Run Complete.
+
 ## Input
 
 - WASD and arrow keys move the player.
 - Spacebar fires forward into the scene with a cooldown for held firing.
 - Pointer press can trigger a simple single shot for mouse or touch embeds.
+- Escape pauses/resumes during active gameplay.
 - R restarts after game over.
 - Enter continues after stage clear.
 
@@ -52,4 +55,4 @@ The 30-stage plan should become data-driven later. Stage definitions should cove
 
 ## Assets
 
-No final assets are included through Phase 5. Projectiles, enemies, hit feedback, invulnerability feedback, and progression overlays are placeholder visuals generated from Babylon primitives, code effects, or DOM/CSS for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
+No final assets are included through Phase 6. Projectiles, enemies, hit feedback, invulnerability feedback, and menu/progression overlays are placeholder visuals generated from Babylon primitives, code effects, or DOM/CSS for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.

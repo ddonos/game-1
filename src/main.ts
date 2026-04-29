@@ -1,6 +1,8 @@
 import { GameApp } from "./game/GameApp";
 import { createGameOverOverlay } from "./ui/gameOverOverlay";
 import { createHud } from "./ui/hud";
+import { createMainMenuOverlay } from "./ui/mainMenuOverlay";
+import { createPauseMenuOverlay } from "./ui/pauseMenuOverlay";
 import { createStageClearOverlay } from "./ui/stageClearOverlay";
 import "./ui/styles.css";
 
@@ -16,13 +18,34 @@ root.append(canvas);
 
 const hud = createHud(root);
 let game: GameApp;
+const mainMenuOverlay = createMainMenuOverlay(root, () => {
+  game.startRunFromMainMenu();
+});
+const pauseMenuOverlay = createPauseMenuOverlay(root, {
+  onResume: () => {
+    game.resumeGameplay();
+  },
+  onRestartRun: () => {
+    game.restartRun();
+  },
+  onMainMenu: () => {
+    game.returnToMainMenu();
+  }
+});
 const gameOverOverlay = createGameOverOverlay(root, () => {
   game.restartRun();
 });
 const stageClearOverlay = createStageClearOverlay(root, () => {
   game.continueFromStageClear();
 });
-game = new GameApp(canvas, hud, gameOverOverlay, stageClearOverlay);
+game = new GameApp(
+  canvas,
+  hud,
+  mainMenuOverlay,
+  pauseMenuOverlay,
+  gameOverOverlay,
+  stageClearOverlay
+);
 
 game.start();
 

@@ -1,5 +1,48 @@
 # Game Changelog
 
+## Phase 6
+
+### What Changed
+
+- Added a Main Menu overlay shown before gameplay starts.
+- Main Menu includes Play, How to Play, Missions placeholder, and footer text.
+- Added How to Play guidance for movement, firing, survival, rewards, enemy avoidance, and stage clearing.
+- Added Missions placeholder panel with example mission text.
+- Added a Pause Menu overlay available only during active gameplay with Escape.
+- Pause Menu supports Resume, Restart Run, and Back to Main Menu.
+- Replaced fragile menu/progression booleans with explicit run states: `mainMenu`, `playing`, `paused`, `stageClear`, `gameOver`, and `runComplete`.
+- Gameplay updates are gated so movement, shooting, spawning, combat, hit bursts, and timer updates run only while playing.
+- Back to Main Menu clears active gameplay objects, resets the run, hides gameplay overlays, and shows Main Menu.
+
+### Files Changed
+
+- `src/game/GameApp.ts`
+- `src/main.ts`
+- `src/systems/InputController.ts`
+- `src/ui/hud.ts`
+- `src/ui/mainMenuOverlay.ts`
+- `src/ui/pauseMenuOverlay.ts`
+- `src/ui/styles.css`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Missions are placeholder text only and have no logic.
+- Shop, power-ups, boss stages, enemy shooting, audio, saving/loading, leaderboard, and final assets are not implemented in Phase 6.
+- Menus use generated DOM/CSS only and are not final art.
+
+### Next Recommended Step
+
+- Add data-driven stage configuration or the first real mission tracking pass.
+
 ## Phase 5
 
 ### What Changed

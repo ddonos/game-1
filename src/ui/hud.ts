@@ -2,6 +2,8 @@ import type { GameState } from "../utils/types";
 
 export type HudController = {
   update: (state: GameState) => void;
+  show: () => void;
+  hide: () => void;
 };
 
 export function createHud(root: HTMLElement): HudController {
@@ -30,6 +32,12 @@ export function createHud(root: HTMLElement): HudController {
       fields.currency.value.textContent = String(state.currency);
       fields.stage.value.textContent = String(state.stage);
       fields.time.value.textContent = formatStageTime(state.stageTimeRemaining);
+    },
+    show() {
+      hud.hidden = false;
+    },
+    hide() {
+      hud.hidden = true;
     }
   };
 }
