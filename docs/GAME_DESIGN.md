@@ -20,6 +20,12 @@ The current player verbs are movement and shooting. The player ship moves left, 
 
 Shooting uses Spacebar as the primary fire input. Holding Spacebar fires repeatedly at a controlled cooldown. Pointer press on the screen also triggers a simple single-shot fire input for mouse or touch-friendly html5 embeds. Projectiles are placeholder glowing primitives that travel forward into the scene along the intended enemy approach lane.
 
+## Current Enemy Behavior
+
+Placeholder enemies now spawn from the front/deep space area at varied X and Y positions within the visible play area. They move toward the player along the Z axis and deactivate after passing the player.
+
+Enemies currently do not shoot, collide with projectiles, damage the player, grant score, or grant currency. Enemy visuals are generated Babylon primitives only and are not final assets.
+
 ## Later Systems
 
-Object pooling is now introduced for player projectiles. Pooling is still required later for enemies, hazards, effects, pickups, and any repeated temporary objects. This is important for smooth iframe/html5 performance and to avoid garbage collection spikes.
+Object pooling is now introduced for player projectiles and placeholder enemies. Pooling is still required later for hazards, effects, pickups, and any repeated temporary objects. This is important for smooth iframe/html5 performance and to avoid garbage collection spikes.

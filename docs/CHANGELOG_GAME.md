@@ -1,5 +1,42 @@
 # Game Changelog
 
+## Phase 2
+
+### What Changed
+
+- Added a placeholder enemy entity built from Babylon primitives.
+- Added enemy pooling so enemies are pre-created, hidden while inactive, and reused.
+- Added a spawn system that creates readable enemy waves from the front/deep space area.
+- Enemies spawn at varied X/Y positions, move toward the player along the Z axis, and deactivate after passing the player.
+- Added enemy configuration for speed, pool size, spawn interval, spawn bounds, and deactivation distance.
+
+### Files Changed
+
+- `src/config/gameConfig.ts`
+- `src/entities/Enemy.ts`
+- `src/game/GameApp.ts`
+- `src/systems/EnemyPool.ts`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Enemies do not collide with projectiles yet.
+- Enemies do not shoot, damage the player, grant score, or grant currency.
+- Bosses, missions, shop, power-ups, audio, and final assets are not implemented in Phase 2.
+- Enemy visuals are generated placeholders, not final assets.
+
+### Next Recommended Step
+
+- Add projectile-enemy collision with pooled enemy deactivation and basic score updates.
+
 ## Phase 1
 
 ### What Changed

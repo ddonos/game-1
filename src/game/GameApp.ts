@@ -3,6 +3,7 @@ import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 
 import { GAME_CONFIG } from "../config/gameConfig";
 import { PlayerShip } from "../entities/PlayerShip";
+import { EnemyPool } from "../systems/EnemyPool";
 import { InputController } from "../systems/InputController";
 import { ProjectilePool } from "../systems/ProjectilePool";
 import { Starfield } from "../systems/Starfield";
@@ -15,6 +16,7 @@ export class GameApp {
   private readonly fireOrigin = new Vector3();
   private readonly resizeObserver: ResizeObserver;
   private player?: PlayerShip;
+  private enemies?: EnemyPool;
   private projectiles?: ProjectilePool;
   private starfield?: Starfield;
 
@@ -39,6 +41,7 @@ export class GameApp {
   start(): void {
     const scene = createScene(this.engine);
     this.player = new PlayerShip(scene);
+    this.enemies = new EnemyPool(scene);
     this.projectiles = new ProjectilePool(scene);
     this.starfield = new Starfield();
     void this.starfield.create(scene);
@@ -58,6 +61,7 @@ export class GameApp {
       this.player?.update(deltaSeconds, movement);
       this.player?.writeMuzzlePositionToRef(this.fireOrigin);
       this.projectiles?.update(deltaSeconds, shouldFire, this.fireOrigin);
+      this.enemies?.update(deltaSeconds);
       this.starfield?.update(deltaSeconds);
 
       scene.render();
@@ -68,6 +72,7 @@ export class GameApp {
     this.resizeObserver.disconnect();
     this.starfield?.dispose();
     this.projectiles?.dispose();
+    this.enemies?.dispose();
     this.player?.dispose();
     this.input.dispose();
     this.engine.dispose();

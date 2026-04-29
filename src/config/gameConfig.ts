@@ -40,5 +40,20 @@ export const GAME_CONFIG = {
     speed: 44,
     maxTravelDistance: 70,
     fireCooldownSeconds: 0.16
+  },
+  enemies: {
+    poolSize: 10,
+    speed: 8,
+    spawnZ: 54,
+    deactivateZ: -9,
+    spawnIntervalSeconds: {
+      min: 1.2,
+      max: 1.8
+    },
+    spawnBounds: {
+      x: 4.2,
+      yMin: -2.1,
+      yMax: 2.5
+    }
   }
 } as const;

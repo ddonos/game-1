@@ -14,8 +14,8 @@ The code keeps scene setup, player entity behavior, input, HUD, configuration, a
 ## Folder Layout
 
 - `src/game`: application bootstrap and Babylon scene creation
-- `src/entities`: runtime entities such as the player ship and pooled projectile visual
-- `src/systems`: input, starfield, projectile pooling, and later reusable gameplay systems
+- `src/entities`: runtime entities such as the player ship, pooled projectile visual, and placeholder enemy
+- `src/systems`: input, starfield, projectile pooling, enemy pooling/spawning, and later reusable gameplay systems
 - `src/config`: constants and later data manifests
 - `src/ui`: DOM HUD and styles
 - `src/utils`: shared small helpers and types
@@ -24,9 +24,11 @@ The code keeps scene setup, player entity behavior, input, HUD, configuration, a
 
 ## Performance Notes
 
-The game must run smoothly inside an iframe/html5 environment. The current scene uses a small primitive ship, a lightweight point-based starfield, and pooled player projectiles.
+The game must run smoothly inside an iframe/html5 environment. The current scene uses a small primitive ship, a lightweight point-based starfield, pooled player projectiles, and pooled placeholder enemies.
 
 Projectile pooling is implemented for player bullets/projectiles. A limited pool is pre-created, inactive projectiles are hidden and skipped, and firing reuses available instances instead of creating and disposing meshes during gameplay. Later phases must extend object pooling to other frequently spawned objects and should avoid per-frame allocations in hot paths.
+
+Enemy pooling is implemented for placeholder enemies. A limited pool is pre-created, inactive enemies are disabled and skipped, and the spawn system reuses available enemies at a readable interval. Enemies spawn from deep space with varied X/Y positions, move toward the player along the Z axis, and deactivate after passing the player.
 
 ## Input
 
@@ -40,4 +42,4 @@ The 30-stage plan should become data-driven later. Stage definitions should cove
 
 ## Assets
 
-No final assets are included through Phase 1. Projectiles are placeholder visuals generated from Babylon primitives for now. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
+No final assets are included through Phase 2. Projectiles and enemies are placeholder visuals generated from Babylon primitives for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
