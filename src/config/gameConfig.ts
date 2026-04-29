@@ -5,6 +5,9 @@ export const GAME_CONFIG = {
   initialStage: 1,
   player: {
     speed: 9,
+    collisionRadius: 0.75,
+    invulnerabilitySeconds: 1.5,
+    blinkIntervalSeconds: 0.12,
     muzzleOffset: {
       x: 0,
       y: 0,

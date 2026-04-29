@@ -10,6 +10,7 @@ Phase 0 includes only the playable shell: a black space background, lightweight 
 
 - The full game is planned for 30 stages.
 - The player has a maximum of 3 lives for the full run.
+- Game over occurs when lives reach 0.
 - Normal stages should last around 30-40 seconds.
 - Every 5th stage is a boss stage.
 - Stage rules should become data-driven later so pacing, spawn plans, hazards, rewards, and boss metadata can be tuned without rewriting runtime code.
@@ -26,7 +27,9 @@ Placeholder enemies now spawn from the front/deep space area at varied X and Y p
 
 Player projectiles can now destroy enemies with simple forgiving collision. Destroyed enemies grant score and currency immediately, and the HUD updates as rewards are earned.
 
-Enemies currently do not shoot or damage the player. Enemy visuals and hit feedback are generated Babylon primitives only and are not final assets.
+Enemies can now damage the player on direct collision. A collision removes the enemy, reduces lives by 1, and briefly activates player invulnerability so overlapping enemies cannot drain multiple lives immediately.
+
+Enemies currently do not shoot. Enemy visuals, hit feedback, and invulnerability feedback are generated Babylon primitives/code effects only and are not final assets.
 
 ## Later Systems
 

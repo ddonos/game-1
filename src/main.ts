@@ -1,4 +1,5 @@
 import { GameApp } from "./game/GameApp";
+import { createGameOverOverlay } from "./ui/gameOverOverlay";
 import { createHud } from "./ui/hud";
 import "./ui/styles.css";
 
@@ -13,7 +14,11 @@ canvas.id = "game-canvas";
 root.append(canvas);
 
 const hud = createHud(root);
-const game = new GameApp(canvas, hud);
+let game: GameApp;
+const gameOverOverlay = createGameOverOverlay(root, () => {
+  game.restartRun();
+});
+game = new GameApp(canvas, hud, gameOverOverlay);
 
 game.start();
 

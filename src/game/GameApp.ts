@@ -9,6 +9,7 @@ import { HitFeedbackPool } from "../systems/HitFeedbackPool";
 import { InputController } from "../systems/InputController";
 import { ProjectilePool } from "../systems/ProjectilePool";
 import { Starfield } from "../systems/Starfield";
+import type { GameOverOverlayController } from "../ui/gameOverOverlay";
 import type { HudController } from "../ui/hud";
 import type { GameState } from "../utils/types";
 import { createScene } from "./createScene";
@@ -28,12 +29,14 @@ export class GameApp {
   private player?: PlayerShip;
   private enemies?: EnemyPool;
   private hitFeedback?: HitFeedbackPool;
+  private isGameOver = false;
   private projectiles?: ProjectilePool;
   private starfield?: Starfield;
 
   constructor(
     canvas: HTMLCanvasElement,
-    private readonly hud: HudController
+    private readonly hud: HudController,
+    private readonly gameOverOverlay: GameOverOverlayController
   ) {
     this.engine = new Engine(canvas, true, {
       antialias: true,
@@ -63,6 +66,18 @@ export class GameApp {
 
     this.engine.runRenderLoop(() => {
       const deltaSeconds = this.engine.getDeltaTime() / 1000;
+      const shouldRestart = this.input.consumeRestart();
+
+      if (this.isGameOver) {
+        if (shouldRestart) {
+          this.restartRun();
+        }
+
+        this.starfield?.update(deltaSeconds);
+        scene.render();
+        return;
+      }
+
       const movement = this.input.getMovement();
       const shouldFire = this.input.isFirePressed() || this.input.consumePointerFire();
 
@@ -70,8 +85,10 @@ export class GameApp {
       this.player?.writeMuzzlePositionToRef(this.fireOrigin);
       this.projectiles?.update(deltaSeconds, shouldFire, this.fireOrigin);
       this.enemies?.update(deltaSeconds);
-      this.combat?.update();
-      this.applyCombatRewards();
+      if (this.player) {
+        this.combat?.update(this.player);
+      }
+      this.applyCombatResults();
       this.hitFeedback?.update(deltaSeconds);
       this.starfield?.update(deltaSeconds);
 
@@ -90,20 +107,54 @@ export class GameApp {
     this.engine.dispose();
   }
 
-  private applyCombatRewards(): void {
+  restartRun(): void {
+    this.gameState.lives = GAME_CONFIG.initialLives;
+    this.gameState.score = GAME_CONFIG.initialScore;
+    this.gameState.currency = GAME_CONFIG.initialCurrency;
+    this.gameState.stage = GAME_CONFIG.initialStage;
+    this.isGameOver = false;
+
+    this.combat?.reset();
+    this.enemies?.deactivateAll();
+    this.projectiles?.deactivateAll();
+    this.hitFeedback?.deactivateAll();
+    this.player?.reset();
+    this.hud.update(this.gameState);
+    this.gameOverOverlay.hide();
+  }
+
+  private applyCombatResults(): void {
     if (!this.combat) {
       return;
     }
 
     const score = this.combat.consumeScore();
     const currency = this.combat.consumeCurrency();
+    const lifeLoss = this.combat.consumeLifeLoss();
 
-    if (score === 0 && currency === 0) {
+    if (score === 0 && currency === 0 && lifeLoss === 0) {
       return;
     }
 
     this.gameState.score += score;
     this.gameState.currency += currency;
+    this.gameState.lives = Math.max(0, this.gameState.lives - lifeLoss);
     this.hud.update(this.gameState);
+
+    if (lifeLoss > 0 && this.gameState.lives > 0) {
+      this.player?.startInvulnerability();
+    }
+
+    if (this.gameState.lives === 0) {
+      this.enterGameOver();
+    }
+  }
+
+  private enterGameOver(): void {
+    this.isGameOver = true;
+    this.enemies?.deactivateAll();
+    this.projectiles?.deactivateAll();
+    this.hitFeedback?.deactivateAll();
+    this.gameOverOverlay.show(this.gameState);
   }
 }

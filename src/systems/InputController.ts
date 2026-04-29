@@ -8,13 +8,15 @@ const ACTION_KEYS = {
   right: new Set(["ArrowRight", "KeyD"]),
   up: new Set(["ArrowUp", "KeyW"]),
   down: new Set(["ArrowDown", "KeyS"]),
-  fire: new Set(["Space"])
+  fire: new Set(["Space"]),
+  restart: new Set(["KeyR"])
 };
 
 export class InputController {
   private readonly pressedKeys = new Set<string>();
   private readonly abortController = new AbortController();
   private queuedPointerFire = false;
+  private queuedRestart = false;
 
   constructor(target: Window = window) {
     target.addEventListener("keydown", this.handleKeyDown, {
@@ -53,6 +55,12 @@ export class InputController {
     return shouldFire;
   }
 
+  consumeRestart(): boolean {
+    const shouldRestart = this.queuedRestart;
+    this.queuedRestart = false;
+    return shouldRestart;
+  }
+
   dispose(): void {
     this.abortController.abort();
     this.pressedKeys.clear();
@@ -69,14 +77,18 @@ export class InputController {
   }
 
   private readonly handleKeyDown = (event: KeyboardEvent): void => {
-    if (isMovementKey(event.code)) {
+    if (isActionKey(event.code)) {
       event.preventDefault();
       this.pressedKeys.add(event.code);
+
+      if (this.hasAction("restart")) {
+        this.queuedRestart = true;
+      }
     }
   };
 
   private readonly handleKeyUp = (event: KeyboardEvent): void => {
-    if (isMovementKey(event.code)) {
+    if (isActionKey(event.code)) {
       event.preventDefault();
       this.pressedKeys.delete(event.code);
     }
@@ -85,15 +97,20 @@ export class InputController {
   private readonly handleBlur = (): void => {
     this.pressedKeys.clear();
     this.queuedPointerFire = false;
+    this.queuedRestart = false;
   };
 
   private readonly handlePointerDown = (event: PointerEvent): void => {
+    if (event.target instanceof Element && event.target.closest("button")) {
+      return;
+    }
+
     if (event.button === 0) {
       this.queuedPointerFire = true;
     }
   };
 }
 
-function isMovementKey(code: string): boolean {
+function isActionKey(code: string): boolean {
   return Object.values(ACTION_KEYS).some((keys) => keys.has(code));
 }

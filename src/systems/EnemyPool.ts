@@ -38,6 +38,14 @@ export class EnemyPool {
     return this.enemies;
   }
 
+  deactivateAll(): void {
+    for (const enemy of this.enemies) {
+      enemy.deactivate();
+    }
+
+    this.resetSpawnTimer();
+  }
+
   dispose(): void {
     for (const enemy of this.enemies) {
       enemy.dispose();

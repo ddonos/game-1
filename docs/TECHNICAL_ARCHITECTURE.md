@@ -30,13 +30,18 @@ Projectile pooling is implemented for player bullets/projectiles. A limited pool
 
 Enemy pooling is implemented for placeholder enemies. A limited pool is pre-created, inactive enemies are disabled and skipped, and the spawn system reuses available enemies at a readable interval. Enemies spawn from deep space with varied X/Y positions, move toward the player along the Z axis, and deactivate after passing the player.
 
-Combat uses simple bounding-sphere distance checks between active player projectiles and active enemies only. It does not use Babylon mesh collision or a physics engine. On hit, the combat system deactivates the projectile and enemy, spawns a small pooled placeholder hit burst, records score/currency rewards, and `GameApp` applies those rewards to the shared HUD state.
+Combat uses simple bounding-sphere distance checks. Active player projectiles are checked against active enemies for rewards, and active enemies are checked against the player for direct damage. It does not use Babylon mesh collision or a physics engine.
+
+On projectile hit, the combat system deactivates the projectile and enemy, spawns a small pooled placeholder hit burst, records score/currency rewards, and `GameApp` applies those rewards to the shared HUD state. On player hit, the combat system deactivates the enemy and records one life loss.
+
+Player invulnerability is tracked on the player entity after damage. While invulnerable, enemy-player collisions do not reduce lives, and the player ship blinks using generated visibility toggles. Game over is a simple run state in `GameApp`: active gameplay updates pause, spawning/shooting stop, pools are cleared, and a DOM overlay shows final score/currency. Restart via `R` or the overlay button resets run state, clears active pools, resets the player, hides the overlay, and resumes gameplay.
 
 ## Input
 
 - WASD and arrow keys move the player.
 - Spacebar fires forward into the scene with a cooldown for held firing.
 - Pointer press can trigger a simple single shot for mouse or touch embeds.
+- R restarts after game over.
 
 ## Future Data
 
@@ -44,4 +49,4 @@ The 30-stage plan should become data-driven later. Stage definitions should cove
 
 ## Assets
 
-No final assets are included through Phase 3. Projectiles, enemies, and hit feedback are placeholder visuals generated from Babylon primitives for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.
+No final assets are included through Phase 4. Projectiles, enemies, hit feedback, and invulnerability feedback are placeholder visuals generated from Babylon primitives or code effects for now. No external assets were added. Commercial delivery requires asset licence tracking in `docs/ASSET_REGISTER.md`, including source, author, licence, purchase or attribution notes, and permitted usage.

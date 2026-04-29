@@ -34,6 +34,14 @@ export class ProjectilePool {
     return this.projectiles;
   }
 
+  deactivateAll(): void {
+    this.cooldownRemaining = 0;
+
+    for (const projectile of this.projectiles) {
+      projectile.deactivate();
+    }
+  }
+
   dispose(): void {
     for (const projectile of this.projectiles) {
       projectile.dispose();

@@ -32,6 +32,12 @@ export class HitFeedbackPool {
     }
   }
 
+  deactivateAll(): void {
+    for (const burst of this.bursts) {
+      burst.deactivate();
+    }
+  }
+
   dispose(): void {
     for (const burst of this.bursts) {
       burst.dispose();

@@ -67,7 +67,7 @@ export class HitBurst {
     this.mesh.dispose();
   }
 
-  private deactivate(): void {
+  deactivate(): void {
     this.active = false;
     this.mesh.setEnabled(false);
   }

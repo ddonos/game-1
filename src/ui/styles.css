@@ -72,8 +72,94 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.game-over {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-content: center;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.58);
+  color: #f4fbff;
+  text-align: center;
+}
+
+.game-over[hidden] {
+  display: none;
+}
+
+.game-over__title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 42px;
+  line-height: 1;
+  letter-spacing: 0;
+  text-shadow: 0 0 18px rgba(62, 210, 255, 0.55);
+}
+
+.game-over__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 140px));
+  gap: 10px;
+  justify-content: center;
+}
+
+.game-over__stat {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(132, 208, 255, 0.35);
+  border-radius: 6px;
+  background: rgba(0, 10, 18, 0.82);
+}
+
+.game-over__stat-label {
+  color: #9fc8dd;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.game-over__stat-value {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-over__button {
+  justify-self: center;
+  min-width: 124px;
+  min-height: 38px;
+  border: 1px solid rgba(132, 208, 255, 0.7);
+  border-radius: 6px;
+  background: #dff7ff;
+  color: #001018;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.game-over__button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.game-over__hint {
+  margin: 0;
+  color: #b8d7e6;
+  font-size: 13px;
+}
+
 @media (max-width: 520px) {
   .hud {
     grid-template-columns: repeat(2, minmax(0, max-content));
+  }
+
+  .game-over__title {
+    font-size: 34px;
+  }
+
+  .game-over__stats {
+    grid-template-columns: minmax(0, 160px);
   }
 }

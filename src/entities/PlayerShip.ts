@@ -11,6 +11,8 @@ import type { MovementVector } from "../systems/InputController";
 
 export class PlayerShip {
   private readonly root: TransformNode;
+  private readonly visualMeshes: Mesh[] = [];
+  private invulnerabilityRemaining = 0;
 
   constructor(scene: Scene) {
     this.root = new TransformNode("player-ship", scene);
@@ -41,14 +43,17 @@ export class PlayerShip {
     hull.material = hullMaterial;
     hull.rotation.x = Math.PI / 2;
     hull.parent = this.root;
+    this.visualMeshes.push(hull);
 
     const leftWing = this.createWing("player-left-wing", scene, wingMaterial);
     leftWing.position.x = -0.48;
     leftWing.rotation.z = 0.25;
+    this.visualMeshes.push(leftWing);
 
     const rightWing = this.createWing("player-right-wing", scene, wingMaterial);
     rightWing.position.x = 0.48;
     rightWing.rotation.z = -0.25;
+    this.visualMeshes.push(rightWing);
   }
 
   update(deltaSeconds: number, movement: MovementVector): void {
@@ -70,10 +75,34 @@ export class PlayerShip {
 
     this.root.rotation.z = -movement.x * 0.22;
     this.root.rotation.x = movement.y * 0.12;
+    this.updateInvulnerability(deltaSeconds);
   }
 
   get position(): Vector3 {
     return this.root.position;
+  }
+
+  get collisionRadius(): number {
+    return GAME_CONFIG.player.collisionRadius;
+  }
+
+  get isInvulnerable(): boolean {
+    return this.invulnerabilityRemaining > 0;
+  }
+
+  startInvulnerability(): void {
+    this.invulnerabilityRemaining = GAME_CONFIG.player.invulnerabilitySeconds;
+  }
+
+  reset(): void {
+    this.root.position.set(
+      GAME_CONFIG.player.startPosition.x,
+      GAME_CONFIG.player.startPosition.y,
+      GAME_CONFIG.player.startPosition.z
+    );
+    this.root.rotation.set(0, 0, 0);
+    this.invulnerabilityRemaining = 0;
+    this.setVisualsVisible(true);
   }
 
   writeMuzzlePositionToRef(target: Vector3): void {
@@ -102,6 +131,34 @@ export class PlayerShip {
     wing.position.z = -0.12;
     wing.parent = this.root;
     return wing;
+  }
+
+  private updateInvulnerability(deltaSeconds: number): void {
+    if (this.invulnerabilityRemaining <= 0) {
+      this.setVisualsVisible(true);
+      return;
+    }
+
+    this.invulnerabilityRemaining = Math.max(
+      0,
+      this.invulnerabilityRemaining - deltaSeconds
+    );
+
+    if (this.invulnerabilityRemaining === 0) {
+      this.setVisualsVisible(true);
+      return;
+    }
+
+    const blinkIndex = Math.floor(
+      this.invulnerabilityRemaining / GAME_CONFIG.player.blinkIntervalSeconds
+    );
+    this.setVisualsVisible(blinkIndex % 2 === 0);
+  }
+
+  private setVisualsVisible(isVisible: boolean): void {
+    for (const mesh of this.visualMeshes) {
+      mesh.isVisible = isVisible;
+    }
   }
 }
 

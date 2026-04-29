@@ -1,5 +1,53 @@
 # Game Changelog
 
+## Phase 4
+
+### What Changed
+
+- Added enemy-player collision using active-enemy bounding-sphere distance checks.
+- Enemy contact now deactivates the enemy, reduces player lives by 1, and updates the HUD immediately.
+- Added a 1.5 second player invulnerability window after damage.
+- Added lightweight player blinking during invulnerability.
+- Added game over state when lives reach 0.
+- Game over stops active gameplay updates, enemy spawning, and player shooting.
+- Added a simple DOM game over overlay with final score, final currency, and restart controls.
+- Added restart via `R` or the overlay Restart button.
+- Restart resets lives, score, currency, stage, active pools, player position, and overlay visibility.
+
+### Files Changed
+
+- `src/config/gameConfig.ts`
+- `src/entities/HitBurst.ts`
+- `src/entities/PlayerShip.ts`
+- `src/game/GameApp.ts`
+- `src/main.ts`
+- `src/systems/CombatSystem.ts`
+- `src/systems/EnemyPool.ts`
+- `src/systems/HitFeedbackPool.ts`
+- `src/systems/InputController.ts`
+- `src/systems/ProjectilePool.ts`
+- `src/ui/gameOverOverlay.ts`
+- `src/ui/styles.css`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+- `README.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Enemies still do not shoot.
+- Stage timer, stage clear, bosses, missions, shop, power-ups, audio, and final assets are not implemented in Phase 4.
+- Game over and invulnerability visuals are generated placeholders.
+
+### Next Recommended Step
+
+- Add a simple stage timer and stage clear flow for normal stages.
+
 ## Phase 3
 
 ### What Changed
