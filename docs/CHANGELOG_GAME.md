@@ -1,5 +1,53 @@
 # Game Changelog
 
+## Phase 10
+
+### What Changed
+
+- Added a between-stage shop state and DOM/CSS shop overlay.
+- Added run-only upgrades for fire rate, projectile damage, projectile speed, shield duration, and score bonus.
+- Added upgrade config and `UpgradeSystem` for costs, levels, affordability, and derived gameplay values.
+- Shop appears after stage clear when at least one available upgrade is affordable; players can buy or skip.
+- Fire rate upgrades use the existing cooldown path and configured minimum cooldown guards.
+- Projectile damage affects enemy health checks, including tank enemies.
+- Projectile speed uses the existing pooled projectile update path.
+- Shield duration upgrades extend future duration-based shield pickups.
+- Score bonus affects score rewards only and does not increase currency.
+- Restart and Main Menu reset all run upgrade levels.
+
+### Files Changed
+
+- `src/config/upgrades.ts`
+- `src/entities/Projectile.ts`
+- `src/game/GameApp.ts`
+- `src/main.ts`
+- `src/systems/CombatSystem.ts`
+- `src/systems/EffectSystem.ts`
+- `src/systems/PowerUpPool.ts`
+- `src/systems/ProjectilePool.ts`
+- `src/systems/UpgradeSystem.ts`
+- `src/ui/shopOverlay.ts`
+- `src/ui/styles.css`
+- `README.md`
+- `docs/GAME_DESIGN.md`
+- `docs/TECHNICAL_ARCHITECTURE.md`
+- `docs/STAGE_DESIGN.md`
+- `docs/ASSET_REGISTER.md`
+- `docs/CHANGELOG_GAME.md`
+
+### Tests/Build Commands Run
+
+- `npm run build`
+
+### Known Issues
+
+- Upgrade pricing and effect values are first-pass tuning.
+- Shop has generated UI only; no final art, audio, saving, or mission integration.
+
+### Next Recommended Step
+
+- Playtest stage-clear economy pacing and tune upgrade costs against average currency earned.
+
 ## Phase 9B
 
 ### What Changed

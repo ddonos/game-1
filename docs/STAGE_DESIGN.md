@@ -2,7 +2,7 @@
 
 ## Structure
 
-The full game is planned as a 30-stage run with a maximum of 3 lives. The current implementation supports data-driven stage progression with a 35-second normal-stage timer placeholder. Every 5th stage remains planned as a boss stage, but boss behavior is future work.
+The full game is planned as a 30-stage run with a maximum of 3 lives. The current implementation supports data-driven stage progression with a 35-second normal-stage timer placeholder. Between-stage shop visits can appear after eligible stage clears when affordable upgrades exist. Every 5th stage remains planned as a boss stage, but boss behavior is future work.
 
 ## Stage Progression
 

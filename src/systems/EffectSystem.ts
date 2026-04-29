@@ -22,7 +22,7 @@ export class EffectSystem {
     );
   }
 
-  applyPowerUp(type: PowerUpTypeId): void {
+  applyPowerUp(type: PowerUpTypeId, shieldDurationBonusSeconds = 0): void {
     const config = POWER_UP_CONFIG.types[type];
 
     if (type === "repair") {
@@ -36,7 +36,7 @@ export class EffectSystem {
     }
 
     if (type === "shield") {
-      this.shieldRemaining = config.durationSeconds;
+      this.shieldRemaining = config.durationSeconds + shieldDurationBonusSeconds;
       return;
     }
 
@@ -49,10 +49,12 @@ export class EffectSystem {
     return repair;
   }
 
-  getFireCooldownSeconds(): number {
+  getFireCooldownSeconds(
+    fireCooldownSeconds: number = GAME_CONFIG.projectiles.fireCooldownSeconds
+  ): number {
     const baseCooldown = Math.max(
       GAME_CONFIG.projectiles.minFireCooldownSeconds,
-      GAME_CONFIG.projectiles.fireCooldownSeconds
+      fireCooldownSeconds
     );
 
     if (this.rapidFireRemaining <= 0) {

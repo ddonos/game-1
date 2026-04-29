@@ -54,12 +54,12 @@ export class Projectile {
     this.mesh.setEnabled(true);
   }
 
-  update(deltaSeconds: number): void {
+  update(deltaSeconds: number, speed: number = GAME_CONFIG.projectiles.speed): void {
     if (!this.active) {
       return;
     }
 
-    const distance = GAME_CONFIG.projectiles.speed * deltaSeconds;
+    const distance = speed * deltaSeconds;
     this.mesh.position.z += distance;
     this.travelDistance += distance;
 

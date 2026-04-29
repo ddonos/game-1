@@ -3,6 +3,7 @@ import { createGameOverOverlay } from "./ui/gameOverOverlay";
 import { createHud } from "./ui/hud";
 import { createMainMenuOverlay } from "./ui/mainMenuOverlay";
 import { createPauseMenuOverlay } from "./ui/pauseMenuOverlay";
+import { createShopOverlay } from "./ui/shopOverlay";
 import { createStageClearOverlay } from "./ui/stageClearOverlay";
 import "./ui/styles.css";
 
@@ -35,6 +36,15 @@ const pauseMenuOverlay = createPauseMenuOverlay(root, {
 const gameOverOverlay = createGameOverOverlay(root, () => {
   game.restartRun();
 });
+const shopOverlay = createShopOverlay(
+  root,
+  (id) => {
+    game.buyShopUpgrade(id);
+  },
+  () => {
+    game.skipShop();
+  }
+);
 const stageClearOverlay = createStageClearOverlay(root, () => {
   game.continueFromStageClear();
 });
@@ -43,6 +53,7 @@ game = new GameApp(
   hud,
   mainMenuOverlay,
   pauseMenuOverlay,
+  shopOverlay,
   gameOverOverlay,
   stageClearOverlay
 );

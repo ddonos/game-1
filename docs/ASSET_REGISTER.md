@@ -16,3 +16,5 @@ Future entries must include licence details, attribution requirements, purchase 
 Phase 9A added no external assets.
 
 Phase 9B added no external assets.
+
+Phase 10 added generated shop UI/CSS only and no external assets.

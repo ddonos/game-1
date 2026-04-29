@@ -1,4 +1,3 @@
-import { GAME_CONFIG } from "../config/gameConfig";
 import type { PlayerShip } from "../entities/PlayerShip";
 import { EnemyPool } from "./EnemyPool";
 import { EnemyProjectilePool } from "./EnemyProjectilePool";
@@ -18,8 +17,8 @@ export class CombatSystem {
     private readonly hitFeedback: HitFeedbackPool
   ) {}
 
-  update(player: PlayerShip): void {
-    this.checkProjectileEnemyCollisions();
+  update(player: PlayerShip, projectileDamage: number): void {
+    this.checkProjectileEnemyCollisions(projectileDamage);
     this.checkEnemyProjectilePlayerCollisions(player);
     this.checkEnemyPlayerCollisions(player);
   }
@@ -62,7 +61,7 @@ export class CombatSystem {
     this.pendingLifeLoss = 0;
   }
 
-  private checkProjectileEnemyCollisions(): void {
+  private checkProjectileEnemyCollisions(projectileDamage: number): void {
     for (const projectile of this.projectiles.getActiveProjectiles()) {
       if (!projectile.isActive) {
         continue;
@@ -83,7 +82,7 @@ export class CombatSystem {
           this.hitFeedback.spawn(enemy.position);
           projectile.deactivate();
 
-          if (enemy.takeHit(GAME_CONFIG.projectiles.damage)) {
+          if (enemy.takeHit(projectileDamage)) {
             enemy.deactivate();
             this.pendingScore += enemy.scoreReward;
             this.pendingCurrency += enemy.currencyReward;

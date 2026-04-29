@@ -62,6 +62,12 @@ Generated placeholder power-ups now spawn from deep space, move toward the playe
 
 Temporary effects expire automatically. Shop and permanent upgrades are still future work; future fire-rate upgrades should reduce the cooldown further while respecting the configured minimums.
 
+## Between-Stage Shop
+
+After stage clear, the shop appears before the next stage when the player has enough currency for at least one available upgrade. The player can buy an upgrade or skip and continue to the next stage, saving currency for later.
+
+Currency is spent on run upgrades only. Current upgrades are fire rate, projectile damage, projectile speed, shield duration, and score bonus. Fire rate uses the configured cooldown limits, projectile damage helps reduce tank hit counts, projectile speed uses the existing projectile update path, shield duration extends future shield pickups, and score bonus affects score rewards only. Upgrade levels reset on run restart and when returning to the Main Menu.
+
 ## Menus
 
 The game now starts from a Main Menu instead of immediately starting gameplay. The Main Menu includes Play, How to Play, and a Missions placeholder panel. The How to Play panel lists movement, firing, survival, enemy destruction, enemy avoidance, and stage-clear goals. The Missions panel is placeholder only and does not implement mission logic yet.

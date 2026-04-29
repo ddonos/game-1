@@ -27,7 +27,12 @@ export class PowerUpPool {
     this.resetSpawnTimer();
   }
 
-  update(deltaSeconds: number, player: PlayerShip, effects: EffectSystem): void {
+  update(
+    deltaSeconds: number,
+    player: PlayerShip,
+    effects: EffectSystem,
+    shieldDurationBonusSeconds = 0
+  ): void {
     this.spawnTimer -= deltaSeconds;
 
     if (this.spawnTimer <= 0) {
@@ -39,7 +44,7 @@ export class PowerUpPool {
       powerUp.update(deltaSeconds);
     }
 
-    this.collectActivePowerUps(player, effects);
+    this.collectActivePowerUps(player, effects, shieldDurationBonusSeconds);
   }
 
   deactivateAll(): void {
@@ -56,7 +61,11 @@ export class PowerUpPool {
     }
   }
 
-  private collectActivePowerUps(player: PlayerShip, effects: EffectSystem): void {
+  private collectActivePowerUps(
+    player: PlayerShip,
+    effects: EffectSystem,
+    shieldDurationBonusSeconds: number
+  ): void {
     for (const powerUp of this.powerUps) {
       if (!powerUp.isActive) {
         continue;
@@ -69,7 +78,7 @@ export class PowerUpPool {
       const distanceSquared = dx * dx + dy * dy + dz * dz;
 
       if (distanceSquared <= radius * radius) {
-        effects.applyPowerUp(powerUp.type);
+        effects.applyPowerUp(powerUp.type, shieldDurationBonusSeconds);
         powerUp.deactivate();
       }
     }

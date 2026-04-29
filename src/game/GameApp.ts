@@ -3,6 +3,7 @@ import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 
 import { GAME_CONFIG } from "../config/gameConfig";
 import { getStageConfig } from "../config/stageConfigs";
+import type { UpgradeId } from "../config/upgrades";
 import { PlayerShip } from "../entities/PlayerShip";
 import { CombatSystem } from "../systems/CombatSystem";
 import { EffectSystem } from "../systems/EffectSystem";
@@ -14,10 +15,12 @@ import { ProjectilePool } from "../systems/ProjectilePool";
 import { PowerUpPool } from "../systems/PowerUpPool";
 import { StageSystem } from "../systems/StageSystem";
 import { Starfield } from "../systems/Starfield";
+import { UpgradeSystem } from "../systems/UpgradeSystem";
 import type { GameOverOverlayController } from "../ui/gameOverOverlay";
 import type { HudController } from "../ui/hud";
 import type { MainMenuOverlayController } from "../ui/mainMenuOverlay";
 import type { PauseMenuOverlayController } from "../ui/pauseMenuOverlay";
+import type { ShopOverlayController } from "../ui/shopOverlay";
 import type { StageClearOverlayController } from "../ui/stageClearOverlay";
 import type { GameState } from "../utils/types";
 import { createScene } from "./createScene";
@@ -27,6 +30,7 @@ type RunState =
   | "playing"
   | "paused"
   | "stageClear"
+  | "shop"
   | "gameOver"
   | "runComplete";
 
@@ -58,12 +62,14 @@ export class GameApp {
   private runState: RunState = "mainMenu";
   private stageSystem = new StageSystem();
   private starfield?: Starfield;
+  private upgrades = new UpgradeSystem();
 
   constructor(
     canvas: HTMLCanvasElement,
     private readonly hud: HudController,
     private readonly mainMenuOverlay: MainMenuOverlayController,
     private readonly pauseMenuOverlay: PauseMenuOverlayController,
+    private readonly shopOverlay: ShopOverlayController,
     private readonly gameOverOverlay: GameOverOverlayController,
     private readonly stageClearOverlay: StageClearOverlayController
   ) {
@@ -134,6 +140,12 @@ export class GameApp {
         return;
       }
 
+      if (this.runState === "shop") {
+        this.starfield?.update(deltaSeconds);
+        scene.render();
+        return;
+      }
+
       if (this.runState === "paused") {
         if (shouldPause) {
           this.resumeGameplay();
@@ -160,7 +172,10 @@ export class GameApp {
         deltaSeconds,
         shouldFire,
         this.fireOrigin,
-        this.effects.getFireCooldownSeconds()
+        this.effects.getFireCooldownSeconds(
+          this.upgrades.getBaseFireCooldownSeconds()
+        ),
+        this.upgrades.getProjectileSpeed()
       );
       this.enemies?.update(deltaSeconds);
       if (this.player && this.enemyProjectiles) {
@@ -170,8 +185,13 @@ export class GameApp {
           this.enemyProjectiles
         );
         this.enemyProjectiles.update(deltaSeconds);
-        this.combat?.update(this.player);
-        this.powerUps?.update(deltaSeconds, this.player, this.effects);
+        this.combat?.update(this.player, this.upgrades.getProjectileDamage());
+        this.powerUps?.update(
+          deltaSeconds,
+          this.player,
+          this.effects,
+          this.upgrades.getShieldDurationBonusSeconds()
+        );
       }
       this.applyCombatResults();
       this.applyPowerUpResults();
@@ -234,11 +254,37 @@ export class GameApp {
     this.mainMenuOverlay.show();
   }
 
+  buyShopUpgrade(id: UpgradeId): void {
+    if (this.runState !== "shop") {
+      return;
+    }
+
+    const currency = this.upgrades.buy(id, this.gameState.currency);
+
+    if (currency === null) {
+      return;
+    }
+
+    this.gameState.currency = currency;
+    this.hud.update(this.gameState);
+    this.showShop();
+  }
+
+  skipShop(): void {
+    if (this.runState !== "shop") {
+      return;
+    }
+
+    this.gameState.stage += 1;
+    this.continueToNextStage();
+  }
+
   private resetRunState(): void {
     this.gameState.lives = GAME_CONFIG.initialLives;
     this.gameState.score = GAME_CONFIG.initialScore;
     this.gameState.currency = GAME_CONFIG.initialCurrency;
     this.gameState.stage = GAME_CONFIG.initialStage;
+    this.upgrades.reset();
     this.effects.clear();
     this.gameState.effects = this.effects.getSnapshot();
     this.stageSystem.setStage(this.gameState.stage);
@@ -266,21 +312,7 @@ export class GameApp {
     }
 
     this.gameState.stage += 1;
-    this.stageSystem.setStage(this.gameState.stage);
-    this.enemies?.setStageConfig(this.stageSystem.config);
-    this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
-    this.runState = "playing";
-
-    this.combat?.reset();
-    this.enemies?.deactivateAll();
-    this.projectiles?.deactivateAll();
-    this.enemyProjectiles?.deactivateAll();
-    this.powerUps?.deactivateAll();
-    this.hitFeedback?.deactivateAll();
-    this.player?.reset();
-    this.stageClearOverlay.hide();
-    this.hud.show();
-    this.hud.update(this.gameState);
+    this.continueToNextStage();
   }
 
   private applyCombatResults(): void {
@@ -288,7 +320,9 @@ export class GameApp {
       return;
     }
 
-    this.combat.applyScoreMultiplier(this.effects.getScoreMultiplier());
+    this.combat.applyScoreMultiplier(
+      this.effects.getScoreMultiplier() * this.upgrades.getScoreMultiplier()
+    );
     this.combat.absorbPendingDamage(this.effects);
     const score = this.combat.consumeScore();
     const currency = this.combat.consumeCurrency();
@@ -353,6 +387,7 @@ export class GameApp {
     this.hitFeedback?.deactivateAll();
     this.hud.update(this.gameState);
     this.pauseMenuOverlay.hide();
+    this.shopOverlay.hide();
     this.stageClearOverlay.hide();
     this.gameOverOverlay.show(this.gameState);
   }
@@ -365,6 +400,12 @@ export class GameApp {
     this.enemyProjectiles?.deactivateAll();
     this.powerUps?.deactivateAll();
     this.hitFeedback?.deactivateAll();
+    if (!isRunComplete && this.upgrades.canAffordAny(this.gameState.currency)) {
+      this.runState = "shop";
+      this.showShop();
+      return;
+    }
+
     this.stageClearOverlay.show({
       clearedStage: this.gameState.stage,
       isRunComplete,
@@ -375,8 +416,36 @@ export class GameApp {
   private hideAllOverlays(): void {
     this.mainMenuOverlay.hide();
     this.pauseMenuOverlay.hide();
+    this.shopOverlay.hide();
     this.gameOverOverlay.hide();
     this.stageClearOverlay.hide();
+  }
+
+  private showShop(): void {
+    this.shopOverlay.show({
+      clearedStage: this.gameState.stage,
+      currency: this.gameState.currency,
+      upgrades: this.upgrades.getSnapshots(this.gameState.currency)
+    });
+  }
+
+  private continueToNextStage(): void {
+    this.stageSystem.setStage(this.gameState.stage);
+    this.enemies?.setStageConfig(this.stageSystem.config);
+    this.gameState.stageTimeRemaining = this.stageSystem.remainingSeconds;
+    this.runState = "playing";
+
+    this.combat?.reset();
+    this.enemies?.deactivateAll();
+    this.projectiles?.deactivateAll();
+    this.enemyProjectiles?.deactivateAll();
+    this.powerUps?.deactivateAll();
+    this.hitFeedback?.deactivateAll();
+    this.player?.reset();
+    this.stageClearOverlay.hide();
+    this.shopOverlay.hide();
+    this.hud.show();
+    this.hud.update(this.gameState);
   }
 }
 

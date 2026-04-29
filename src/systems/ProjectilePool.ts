@@ -21,7 +21,8 @@ export class ProjectilePool {
     deltaSeconds: number,
     shouldFire: boolean,
     origin: Vector3,
-    fireCooldownSeconds: number = GAME_CONFIG.projectiles.fireCooldownSeconds
+    fireCooldownSeconds: number = GAME_CONFIG.projectiles.fireCooldownSeconds,
+    projectileSpeed: number = GAME_CONFIG.projectiles.speed
   ): void {
     const cooldownSeconds = Math.max(
       GAME_CONFIG.projectiles.rapidFireMinCooldownSeconds,
@@ -36,7 +37,7 @@ export class ProjectilePool {
     }
 
     for (const projectile of this.projectiles) {
-      projectile.update(deltaSeconds);
+      projectile.update(deltaSeconds, projectileSpeed);
     }
   }
 
